@@ -212,9 +212,10 @@
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		color: #313f47;
+		color: #ffffff;
 		line-height: 1.5;
 		margin: 0 0 0.75em 0;
+		font-style: bold;
 	}
 
 		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -889,7 +890,7 @@
 		-ms-transition: opacity 1s ease, -ms-transform 1s ease;
 		transition: opacity 1s ease, transform 1s ease;
 		padding: 4.5em 3em 3em 3em ;
-		background: #ffffff;
+		background: #0000005b;
 		border-radius: 4px;
 		cursor: default;
 		max-width: 100%;
@@ -897,19 +898,20 @@
 		position: relative;
 		text-align: center;
 		width: 27em;
+		color: #ffffff;
 	}
 
 		#main .avatar {
 			position: relative;
 			display: block;
-			margin-bottom: 1.5em;
+			margin-bottom: 0.5em;
 		}
 
 			#main .avatar img {
 				display: block;
 				margin: 0 auto;
 				border-radius: 100%;
-				box-shadow: 0 0 0 1.5em #ffffff;
+				box-shadow: 0 0 0 0.5em #ffffff60;
 			}
 
 			#main .avatar:before {
@@ -921,7 +923,7 @@
 				width: calc(100% + 6em);
 				height: 1px;
 				z-index: -1;
-				background: #c8cccf;
+				background: #c8cccf00;
 			}
 
 		@media screen and (max-width: 480px) {
