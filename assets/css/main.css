@@ -531,10 +531,10 @@ input, select, textarea {
 	}
 
 	#header {
-		-moz-animation: header 1s 2.25s forwards;
-		-webkit-animation: header 1s 2.25s forwards;
-		-ms-animation: header 1s 2.25s forwards;
-		animation: header 1s 2.25s forwards;
+		-moz-animation: header 0.5s 1.25s forwards;
+		-webkit-animation: header 0.5s 1.25s forwards;
+		-ms-animation: header 0.5s 1.25s forwards;
+		animation: header 0.5s 1.25s forwards;
 		-moz-backface-visibility: hidden;
 		-webkit-backface-visibility: hidden;
 		-ms-backface-visibility: hidden;
@@ -554,16 +554,26 @@ input, select, textarea {
 	}
 
 		#header h1 {
-			font-size: 4.35em;
-			font-weight: 900;
-			letter-spacing: -0.035em;
-			line-height: 1em;
+			font-size: 4em;
+			font-weight: 600;
+			letter-spacing: 0em;
+			line-height: 1.2em;
 		}
+
+		#header h2 {
+			font-size: 1.5em;
+			font-weight: 300;
+			letter-spacing: -0.035em;
+			line-height: 1.2em;
+		}
+
 
 		#header p {
 			font-size: 1.25em;
 			margin: 0.75em 0 0.25em 0;
 			opacity: 0.75;
+			background-color: black;
+			width: auto;
 		}
 
 		#header nav {
