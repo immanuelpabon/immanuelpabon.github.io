@@ -63,7 +63,7 @@ k.scene("main", async () => {
   const fire = k.add([
     k.sprite("spritesheet", { anim: "fire-idle" }),
     k.anchor("center"),
-    k.pos(1314, 990), // Setting a default position for the fire
+    k.pos(200, 200), // Setting a default position for the fire
     k.scale(scaleFactor),
     "fire",
   ]);
