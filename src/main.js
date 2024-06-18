@@ -28,7 +28,7 @@ k.scene("main", async () => {
   const layers = mapData.layers;
 
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
-
+/*
   const fire = k.add([
     k.sprite("spritesheet", { anim: "fire-idle" }),
     k.anchor("center"),
@@ -36,6 +36,7 @@ k.scene("main", async () => {
     k.scale(scaleFactor),
     "fire",
   ]);
+  */
 
   const player = k.add([
     k.sprite("spritesheet", { anim: "idle-down" }),
