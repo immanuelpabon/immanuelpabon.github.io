@@ -2,7 +2,6 @@ import { dialogueData, scaleFactor } from "./constants";
 import { k } from "./kaboomCtx";
 import { displayDialogue, setCamScale } from "./utils";
 
-// Load sprites
 k.loadSprite("spritesheet", "./spritesheet.png", {
   sliceX: 39,
   sliceY: 31,
@@ -18,52 +17,22 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 });
 
 k.loadSprite("map", "./map.png");
-k.loadSprite("background", "./backgroundTrees.png");
 
 // Load the music
 k.loadSound("backgroundMusic", "./forest.wav");
 
-// Function to create a tiled background
-function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
-  const scaledTileWidth = tileWidth * scaleFactor;
-  const scaledTileHeight = tileHeight * scaleFactor;
-  const numTilesX = Math.ceil((mapWidth + k.width()) / scaledTileWidth);
-  const numTilesY = Math.ceil((mapHeight + k.height()) / scaledTileHeight);
-
-  for (let x = -numTilesX; x < numTilesX; x++) {
-    for (let y = -numTilesY; y < numTilesY; y++) {
-      k.add([
-        k.sprite("background"),
-        k.pos(x * scaledTileWidth, y * scaledTileHeight),
-        k.scale(scaleFactor),
-        k.anchor("topleft"),
-        "background",
-      ]);
-    }
-  }
-}
-
-// Set background color (optional, as we now use a tiled image)
 k.setBackground(k.Color.fromHex("#311047"));
 
 k.scene("main", async () => {
   const mapData = await (await fetch("./map.json")).json();
   const layers = mapData.layers;
 
-  // Call the function to create the tiled background
-  const mapWidth = 656 * scaleFactor;
-  const mapHeight = 528 * scaleFactor;
-  createTiledBackground(mapWidth, mapHeight, 160, 160);
-
-  // Play the background music in a loop
-  const music = k.play("backgroundMusic", { loop: true });
-
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
 
   const fire = k.add([
     k.sprite("spritesheet", { anim: "fire-idle" }),
     k.anchor("center"),
-    k.pos(200, 200), // Setting a default position for the fire
+    k.pos(1314, 990), // Setting a default position for the fire
     k.scale(scaleFactor),
     "fire",
   ]);
@@ -84,6 +53,9 @@ k.scene("main", async () => {
     },
     "player",
   ]);
+
+  // Play the background music in a loop
+  const music = k.play("backgroundMusic", { loop: true });
 
   for (const layer of layers) {
     if (layer.name === "boundaries") {
