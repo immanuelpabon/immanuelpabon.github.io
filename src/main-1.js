@@ -12,7 +12,7 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "walk-side": { from: 975, to: 978, loop: true, speed: 8 },
     "idle-up": 1014,
     "walk-up": { from: 1014, to: 1017, loop: true, speed: 8 },
-    "fire-idle": { from: 752, to: 755, loop: true, speed: 8 },
+    "fire-idle": { from: 752, to: 755, loop: true, speed: 8},
   },
 });
 
@@ -26,15 +26,7 @@ k.scene("main", async () => {
 
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
 
-  const fire = k.add([
-    k.sprite("spritesheet", { anim: "fire-idle" }),
-    k.anchor("center"),
-    k.pos(1310,1035), // Setting a default position for the fire
-    k.scale(scaleFactor),
-    "fire",
-  ]);
-
-  const player = k.add([
+  const player = k.make([
     k.sprite("spritesheet", { anim: "idle-down" }),
     k.area({
       shape: new k.Rect(k.vec2(0, 3), 10, 10),
@@ -49,6 +41,18 @@ k.scene("main", async () => {
       isInDialogue: false,
     },
     "player",
+  ]);
+
+  const fire= k.make([
+    k.sprite("spritesheet", { anim: "fire-idle" }),
+    k.area({
+      shape: new k.Rect(k.vec2(0, 3), 10, 10),
+    }),
+    k.body(),
+    k.anchor("center"),
+    k.pos(),
+    k.scale(scaleFactor),
+    "fire",
   ]);
 
   for (const layer of layers) {
@@ -73,6 +77,7 @@ k.scene("main", async () => {
           });
         }
       }
+
       continue;
     }
 
@@ -83,6 +88,9 @@ k.scene("main", async () => {
             (map.pos.x + entity.x) * scaleFactor,
             (map.pos.y + entity.y) * scaleFactor
           );
+          k.add(fire);
+          k.add(player);
+          continue;
         }
       }
     }
