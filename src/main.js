@@ -2,6 +2,7 @@ import { dialogueData, scaleFactor } from "./constants";
 import { k } from "./kaboomCtx";
 import { displayDialogue, setCamScale } from "./utils";
 
+// Load sprites
 k.loadSprite("spritesheet", "./spritesheet.png", {
   sliceX: 39,
   sliceY: 31,
@@ -17,18 +18,45 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 });
 
 k.loadSprite("map", "./map.png");
+k.loadSprite("background", "./path/to/your/background.png");
 
 // Load the music
-k.loadSound("backgroundMusic", "./forest.ogg");
+k.loadSound("backgroundMusic", "./path/to/your/forest.ogg");
 
+// Function to create a tiled background
+function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
+  const scaledTileWidth = tileWidth * scaleFactor;
+  const scaledTileHeight = tileHeight * scaleFactor;
+  const numTilesX = Math.ceil((mapWidth + k.width()) / scaledTileWidth);
+  const numTilesY = Math.ceil((mapHeight + k.height()) / scaledTileHeight);
+
+  for (let x = -numTilesX; x < numTilesX; x++) {
+    for (let y = -numTilesY; y < numTilesY; y++) {
+      k.add([
+        k.sprite("background"),
+        k.pos(x * scaledTileWidth, y * scaledTileHeight),
+        k.scale(scaleFactor),
+        k.anchor("topleft"),
+        "background",
+      ]);
+    }
+  }
+}
+
+// Set background color (optional, as we now use a tiled image)
 k.setBackground(k.Color.fromHex("#311047"));
 
 k.scene("main", async () => {
   const mapData = await (await fetch("./map.json")).json();
   const layers = mapData.layers;
 
+  // Call the function to create the tiled background
+  const mapWidth = 656 * scaleFactor;
+  const mapHeight = 528 * scaleFactor;
+  createTiledBackground(mapWidth, mapHeight, 160, 160);
+
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
-/*
+
   const fire = k.add([
     k.sprite("spritesheet", { anim: "fire-idle" }),
     k.anchor("center"),
@@ -36,7 +64,6 @@ k.scene("main", async () => {
     k.scale(scaleFactor),
     "fire",
   ]);
-  */
 
   const player = k.add([
     k.sprite("spritesheet", { anim: "idle-down" }),
@@ -54,9 +81,6 @@ k.scene("main", async () => {
     },
     "player",
   ]);
-
-  // Play the background music in a loop
-  const music = k.play("backgroundMusic", { loop: true });
 
   for (const layer of layers) {
     if (layer.name === "boundaries") {
@@ -216,6 +240,14 @@ k.scene("main", async () => {
       if (player.curAnim() !== "walk-down") player.play("walk-down");
       player.direction = "down";
       player.move(0, player.speed);
+    }
+  });
+
+  // Ensure music starts playing on user interaction
+  k.mouseClicked(() => {
+    // Check if music is already playing to avoid multiple starts
+    if (!music.isPlaying()) {
+      music.play();
     }
   });
 });
