@@ -18,6 +18,9 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 
 k.loadSprite("map", "./map.png");
 
+// Load the music
+k.loadSound("backgroundMusic", "./forest.wav");
+
 k.setBackground(k.Color.fromHex("#311047"));
 
 k.scene("main", async () => {
@@ -29,7 +32,7 @@ k.scene("main", async () => {
   const fire = k.add([
     k.sprite("spritesheet", { anim: "fire-idle" }),
     k.anchor("center"),
-    k.pos(1310,1035), // Setting a default position for the fire
+    k.pos(1314, 990), // Setting a default position for the fire
     k.scale(scaleFactor),
     "fire",
   ]);
@@ -41,7 +44,7 @@ k.scene("main", async () => {
     }),
     k.body(),
     k.anchor("center"),
-    k.pos(),
+    k.pos(), // Initial position will be set based on spawn point
     k.scale(scaleFactor),
     {
       speed: 250,
@@ -50,6 +53,9 @@ k.scene("main", async () => {
     },
     "player",
   ]);
+
+  // Play the background music in a loop
+  const music = k.play("backgroundMusic", { loop: true });
 
   for (const layer of layers) {
     if (layer.name === "boundaries") {
@@ -79,10 +85,11 @@ k.scene("main", async () => {
     if (layer.name === "spawnpoints") {
       for (const entity of layer.objects) {
         if (entity.name === "player") {
-          player.pos = k.vec2(
-            (map.pos.x + entity.x) * scaleFactor,
-            (map.pos.y + entity.y) * scaleFactor
-          );
+          // Calculate the correct position based on the map and scale factors
+          const playerPosX = (entity.x * scaleFactor);
+          const playerPosY = (entity.y * scaleFactor);
+          player.pos = k.vec2(playerPosX, playerPosY);
+          continue;
         }
       }
     }
@@ -162,6 +169,7 @@ k.scene("main", async () => {
   k.onKeyRelease(() => {
     stopAnims();
   });
+
   k.onKeyDown((key) => {
     const keyMap = [
       k.isKeyDown("right"),
