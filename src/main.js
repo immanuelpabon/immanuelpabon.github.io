@@ -19,7 +19,7 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 k.loadSprite("map", "./map.png");
 
 // Load the music
-k.loadSound("backgroundMusic", "./forest.wav");
+k.loadSound("backgroundMusic", "./forest.ogg");
 
 k.setBackground(k.Color.fromHex("#311047"));
 
