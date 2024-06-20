@@ -15,6 +15,9 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "walk-up": { from: 1014, to: 1017, loop: true, speed: 8 },
     "fire-idle": { from: 752, to: 755, loop: true, speed: 8 },
     "sign-idle": { from: 713, to: 716, loop: true, speed: 6 },
+    "sparkle_1": { from: 876, to: 879, loop: true, speed: 6 },
+    "sparkle_2": { from: 879, to: 882, loop: true, speed: 6 },
+    "sparkle_3": { from: 915, to: 918, loop: true, speed: 6 },
   },
 });
 
@@ -48,8 +51,8 @@ function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
 // Set background color (optional, as we now use a tiled image)
 k.setBackground(k.Color.fromHex("#311047"));
 
-// Dialogue index for TV
-let tvDialogueIndex = 0;
+// Dialogue index for sign
+let signDialogueIndex = 0;
 
 k.scene("main", async () => {
   const mapData = await (await fetch("./map.json")).json();
@@ -65,19 +68,40 @@ k.scene("main", async () => {
   const fire = k.add([
     k.sprite("spritesheet", { anim: "fire-idle" }),
     k.anchor("center"),
-    k.pos(1314, 990), // Setting a default position for the fire
+    k.pos(1314, 980), // Setting a default position for the fire
     k.scale(scaleFactor),
     "fire",
+  ]);
+
+  const sparkle1 = k.add([
+    k.sprite("spritesheet", { anim: "sparkle_1" }),
+    k.anchor("center"),
+    k.pos(2575, 1730),
+    k.scale(scaleFactor),
+    "sparkle_1",
+  ]);
+  const sparkle2 = k.add([
+    k.sprite("spritesheet", { anim: "sparkle_2" }),
+    k.anchor("center"),
+    k.pos(2510, 1760),
+    k.scale(scaleFactor),
+    "sparkle_2",
+  ]);
+  const sparkle3 = k.add([
+    k.sprite("spritesheet", { anim: "sparkle_3" }),
+    k.anchor("center"),
+    k.pos(2580, 1810),
+    k.scale(scaleFactor),
+    "sparkle_3",
   ]);
 
   const sign = k.add([
     k.sprite("spritesheet", { anim: "sign-idle" }),
     k.anchor("center"),
-    k.pos(1314, 895), // Setting a default position for the fire
+    k.pos(1315, 895), // Setting a default position for the fire
     k.scale(scaleFactor),
-    "fire",
+    "sign",
   ]);
-
 
   const player = k.add([
     k.sprite("spritesheet", { anim: "idle-down" }),
@@ -110,13 +134,13 @@ k.scene("main", async () => {
 
         if (boundary.name) {
           player.onCollide(boundary.name, () => {
-            if (boundary.name === "tv") {
+            if (boundary.name === "sign") {
               player.isInDialogue = true;
               displayDialogue(
-                dialogueData["tv"][tvDialogueIndex],
+                dialogueData["sign"][signDialogueIndex],
                 () => {
                   player.isInDialogue = false;
-                  tvDialogueIndex = (tvDialogueIndex + 1) % dialogueData["tv"].length;
+                  signDialogueIndex = (signDialogueIndex + 1) % dialogueData["sign"].length;
                 }
               );
             } else {
