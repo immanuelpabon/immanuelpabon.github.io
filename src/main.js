@@ -14,14 +14,15 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "idle-up": 1014,
     "walk-up": { from: 1014, to: 1017, loop: true, speed: 8 },
     "fire-idle": { from: 752, to: 755, loop: true, speed: 8 },
+    "sign-idle": { from: 713, to: 716, loop: true, speed: 6 },
   },
 });
 
 k.loadSprite("map", "./map.png");
-k.loadSprite("background", "./path/to/your/background.png");
+k.loadSprite("background", "./backgroundTrees.png");
 
 // Load the music
-k.loadSound("backgroundMusic", "./path/to/your/forest.ogg");
+// k.loadSound("backgroundMusic", "./path/to/your/forest.ogg");
 
 // Function to create a tiled background
 function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
@@ -43,8 +44,12 @@ function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
   }
 }
 
+
 // Set background color (optional, as we now use a tiled image)
 k.setBackground(k.Color.fromHex("#311047"));
+
+// Dialogue index for TV
+let tvDialogueIndex = 0;
 
 k.scene("main", async () => {
   const mapData = await (await fetch("./map.json")).json();
@@ -64,6 +69,15 @@ k.scene("main", async () => {
     k.scale(scaleFactor),
     "fire",
   ]);
+
+  const sign = k.add([
+    k.sprite("spritesheet", { anim: "sign-idle" }),
+    k.anchor("center"),
+    k.pos(1314, 895), // Setting a default position for the fire
+    k.scale(scaleFactor),
+    "fire",
+  ]);
+
 
   const player = k.add([
     k.sprite("spritesheet", { anim: "idle-down" }),
@@ -96,11 +110,22 @@ k.scene("main", async () => {
 
         if (boundary.name) {
           player.onCollide(boundary.name, () => {
-            player.isInDialogue = true;
-            displayDialogue(
-              dialogueData[boundary.name],
-              () => (player.isInDialogue = false)
-            );
+            if (boundary.name === "tv") {
+              player.isInDialogue = true;
+              displayDialogue(
+                dialogueData["tv"][tvDialogueIndex],
+                () => {
+                  player.isInDialogue = false;
+                  tvDialogueIndex = (tvDialogueIndex + 1) % dialogueData["tv"].length;
+                }
+              );
+            } else {
+              player.isInDialogue = true;
+              displayDialogue(
+                dialogueData[boundary.name],
+                () => (player.isInDialogue = false)
+              );
+            }
           });
         }
       }
@@ -243,6 +268,7 @@ k.scene("main", async () => {
     }
   });
 
+/*
   // Ensure music starts playing on user interaction
   k.mouseClicked(() => {
     // Check if music is already playing to avoid multiple starts
@@ -250,6 +276,7 @@ k.scene("main", async () => {
       music.play();
     }
   });
+*/
 });
 
 k.go("main");
