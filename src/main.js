@@ -24,7 +24,7 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 k.loadSprite("map", "./map.png");
 k.loadSprite("background", "./backgroundTrees.png");
 
-// Load the music using k.loadMusic()
+// Load the music using k.loadSound()
 k.loadSound("backgroundMusic", "./EWBB.ogg");
 
 // Function to create a tiled background
@@ -167,15 +167,31 @@ k.scene("main", async () => {
       }
     }
 
-  // Play the background music in a loop with reduced volume
-  const music = k.play("backgroundMusic", {
-    loop: true,
-    volume: 0.5 // Adjust volume here (0.5 means 50% volume)
-  });
+    // Define a variable to hold the music instance
+    let music;
 
-  // Automatically start playing music when the scene loads
-  music.play();
+    // Function to start playing music
+    const startMusic = () => {
+      if (!music || !music.isPlaying()) {
+        music = k.play("backgroundMusic", {
+          loop: true,
+          volume: 0.5, // Adjust volume here (0.5 means 50% volume)
+        });
+      }
+    };
 
+    // Handle user interaction to start/resume the audio context
+    const resumeAudioContext = () => {
+      if (k.audioContext && k.audioContext.state === "suspended") {
+        k.audioContext.resume().then(startMusic);
+      } else {
+        startMusic();
+      }
+    };
+
+    // Attach event listeners to user interactions
+    window.addEventListener("click", resumeAudioContext);
+    window.addEventListener("keydown", resumeAudioContext);
   }
 
   setCamScale(k);
@@ -301,34 +317,7 @@ k.scene("main", async () => {
     }
   });
 
-  // Handle user interaction to start/resume the audio context
-  const resumeAudioContext = () => {
-    if (k.audio.ctx.state === "suspended") {
-      k.audio.ctx.resume();
-    }
-  };
-
-  // Attach event listeners to user interactions
-  window.addEventListener("click", resumeAudioContext);
-  window.addEventListener("keydown", resumeAudioContext);
-
-  // Play the background music in a loop
-  const music = k.play("backgroundMusic", {
-    volume: 0.8,
-    loop: true,
-  });
-
-  music.paused = false;
-  music.speed = 1;
-  volume(0.25);
-
-  // Ensure music starts playing on user interaction
-  k.mouseClicked(() => {
-    // Check if music is already playing to avoid multiple starts
-    if (!music.isPlaying()) {
-      music.play();
-    }
-  });
+  setCamScale(k);
 });
 
 k.go("main");
