@@ -18,6 +18,7 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "sparkle_1": { from: 876, to: 879, loop: true, speed: 6 },
     "sparkle_2": { from: 879, to: 882, loop: true, speed: 6 },
     "sparkle_3": { from: 915, to: 918, loop: true, speed: 6 },
+    "koner-idle": { from: 792, to: 795, loop: true, speed: 6 },
   },
 });
 
@@ -25,7 +26,7 @@ k.loadSprite("map", "./map.png");
 k.loadSprite("background", "./backgroundTrees.png");
 
 // Load the music using k.loadSound()
-k.loadSound("backgroundMusic", "./EWBB.ogg");
+k.loadSound("backgroundMusic", "./Elijah Would Be Blue.ogg");
 
 // Function to create a tiled background
 function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
@@ -70,6 +71,14 @@ k.scene("main", async () => {
     k.pos(1314, 980), // Setting a default position for the fire
     k.scale(scaleFactor),
     "fire",
+  ]);
+
+  const koner = k.add([
+    k.sprite("spritesheet", { anim: "koner-idle" }),
+    k.anchor("center"),
+    k.pos(480, 1760), // Setting a default position for the fire
+    k.scale(scaleFactor),
+    "koner",
   ]);
 
   const sparkle1 = k.add([

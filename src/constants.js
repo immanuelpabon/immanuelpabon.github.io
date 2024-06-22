@@ -28,10 +28,14 @@ export const dialogueData = {
   "Don't tell anyone I told you this, but there's a hidden area on the path to the right, just go between the groups of yellow flowers.",
   "I am going to pretend this conversation never happened."
   ],
-  down_sign: "Path to exit.",
+  down_sign: "Portfolio Park exit.",
   up_sign: "Test",
   left_sign: "Test",
   right_sign: "Test",
+  entrance_sign: "Portfolio Park. Parking: $12.00.",
+  lake_sign: "Almost-A-Square Lake.",
+  smile_tree: "I'm a tree!",
+  koner: "Howdy, Name's Keoni Smith. I'm Immanuel's cousin. I made the music you're listening to right now if you have audio enabled.",
   statue: "Derek the Sign. Artist Commision. Do not steal.",
   bed: `This where I sleep. Great ideas comes when I'm lying on my bed. When an idea strikes, I often have to write it down or else I won't be able to sleep because my mental energy is consumed by it.`,
   resume: `This is my desk and on it is my resume. <a href="https://github.com/JSLegendDev/Resume/blob/main/JSLegend%20Resume-1.pdf" target="_blank">Check it out?</a>
@@ -41,7 +45,7 @@ export const dialogueData = {
   Kaboom.js by watching some of my tutorials <a href="https://youtube.com/@jslegenddev" target="_blank">here</a>.`,
   library: `There are a lot of programming books on my shelves. There is even one in French (I also speak French btw).
   I probably only read one of them. Who else compulsively buys technical books without ever finishing them?`,
-  exit: `If you want to exit Immanuel's portfolio, just close the tab.`,
+  exit: `If you want to exit Immanuel's portfolio, You can close the tab. The world drops off here.`,
 };
 /* tv: `That's my TV. I've been watching tech youtubers a lot recently like :
 <a href="https://www.youtube.com/@ThePrimeTimeagen" target="_blank">Theprimeagen</a>, <a href="https://www.youtube.com/@t3dotgg" target="_blank">Theo - t3.gg</a>,
