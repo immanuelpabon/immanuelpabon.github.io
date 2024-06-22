@@ -1,4 +1,4 @@
-import kaboom from "kaboom";
+import kaboom from "kaplay";
 import { scaleFactor } from "./constants";
 
 export const k = kaboom({

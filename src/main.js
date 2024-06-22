@@ -24,8 +24,8 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 k.loadSprite("map", "./map.png");
 k.loadSprite("background", "./backgroundTrees.png");
 
-// Load the music
-// k.loadSound("backgroundMusic", "./path/to/your/forest.ogg");
+// Load the music using k.loadMusic()
+ k.loadSound("backgroundMusic", "./EWBB.ogg");
 
 // Function to create a tiled background
 function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
@@ -167,6 +167,17 @@ k.scene("main", async () => {
         }
       }
     }
+
+  // Play the background music in a loop with reduced volume
+  const music = k.play("backgroundMusic", {
+    loop: true,
+    volume: 0.5 // Adjust volume here (0.5 means 50% volume)
+  });
+
+
+  // Automatically start playing music when the scene loads
+  music.play();
+
   }
 
   setCamScale(k);
@@ -292,7 +303,16 @@ k.scene("main", async () => {
     }
   });
 
-/*
+  // Play the background music in a loop
+  const music = k.play("backgroundMusic", {
+    volume: 0.8,
+    loop: true,
+  });
+
+  music.paused = false
+  music.speed = 1
+  volume(0.25)
+
   // Ensure music starts playing on user interaction
   k.mouseClicked(() => {
     // Check if music is already playing to avoid multiple starts
@@ -300,7 +320,7 @@ k.scene("main", async () => {
       music.play();
     }
   });
-*/
+
 });
 
 k.go("main");
