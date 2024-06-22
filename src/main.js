@@ -25,7 +25,7 @@ k.loadSprite("map", "./map.png");
 k.loadSprite("background", "./backgroundTrees.png");
 
 // Load the music using k.loadMusic()
- k.loadSound("backgroundMusic", "./EWBB.ogg");
+k.loadSound("backgroundMusic", "./EWBB.ogg");
 
 // Function to create a tiled background
 function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
@@ -46,7 +46,6 @@ function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
     }
   }
 }
-
 
 // Set background color (optional, as we now use a tiled image)
 k.setBackground(k.Color.fromHex("#311047"));
@@ -173,7 +172,6 @@ k.scene("main", async () => {
     loop: true,
     volume: 0.5 // Adjust volume here (0.5 means 50% volume)
   });
-
 
   // Automatically start playing music when the scene loads
   music.play();
@@ -303,15 +301,26 @@ k.scene("main", async () => {
     }
   });
 
+  // Handle user interaction to start/resume the audio context
+  const resumeAudioContext = () => {
+    if (k.audio.ctx.state === "suspended") {
+      k.audio.ctx.resume();
+    }
+  };
+
+  // Attach event listeners to user interactions
+  window.addEventListener("click", resumeAudioContext);
+  window.addEventListener("keydown", resumeAudioContext);
+
   // Play the background music in a loop
   const music = k.play("backgroundMusic", {
     volume: 0.8,
     loop: true,
   });
 
-  music.paused = false
-  music.speed = 1
-  volume(0.25)
+  music.paused = false;
+  music.speed = 1;
+  volume(0.25);
 
   // Ensure music starts playing on user interaction
   k.mouseClicked(() => {
@@ -320,7 +329,6 @@ k.scene("main", async () => {
       music.play();
     }
   });
-
 });
 
 k.go("main");
