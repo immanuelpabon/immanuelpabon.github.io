@@ -19,6 +19,9 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "sparkle_2": { from: 879, to: 882, loop: true, speed: 6 },
     "sparkle_3": { from: 915, to: 918, loop: true, speed: 6 },
     "koner-idle": { from: 792, to: 795, loop: true, speed: 6 },
+    "brush-idle": { from: 410, to: 413, loop: true, speed: 6 },
+    "son-idle": { from: 870, to: 872, loop: true, speed: 6 },
+    "kid-idle": { from: 831, to: 832, loop: true, speed: 6 },
   },
 });
 
@@ -76,12 +79,36 @@ k.scene("main", async () => {
   const koner = k.add([
     k.sprite("spritesheet", { anim: "koner-idle" }),
     k.anchor("center"),
-    k.pos(480, 1760), // Setting a default position for the fire
+    k.pos(480, 1760),
     k.scale(scaleFactor),
     "koner",
   ]);
 
-  const sparkle1 = k.add([
+  const brush = k.add([
+    k.sprite("spritesheet", { anim: "brush-idle" }),
+    k.anchor("center"),
+    k.pos(150, 800),
+    k.scale(scaleFactor),
+    "brush",
+  ]);
+
+  const son = k.add([
+    k.sprite("spritesheet", { anim: "son-idle" }),
+    k.anchor("center"),
+    k.pos(1800, 640),
+    k.scale(scaleFactor),
+    "son",
+  ]);
+
+  const kid = k.add([
+    k.sprite("spritesheet", { anim: "kid-idle" }),
+    k.anchor("center"),
+    k.pos(800, 100),
+    k.scale(scaleFactor),
+    "kid",
+  ]);
+
+   const sparkle1 = k.add([
     k.sprite("spritesheet", { anim: "sparkle_1" }),
     k.anchor("center"),
     k.pos(2575, 1730),
@@ -106,7 +133,7 @@ k.scene("main", async () => {
   const sign = k.add([
     k.sprite("spritesheet", { anim: "sign-idle" }),
     k.anchor("center"),
-    k.pos(1315, 895), // Setting a default position for the fire
+    k.pos(1315, 895),
     k.scale(scaleFactor),
     "sign",
   ]);

@@ -35,7 +35,7 @@ export const dialogueData = {
   entrance_sign: "Portfolio Park. Parking: $12.00.",
   lake_sign: "Almost-A-Square Lake.",
   smile_tree: "I'm a tree!",
-  koner: "Howdy, Name's Keoni Smith. I'm Immanuel's cousin. I made the music you're listening to right now if you have audio enabled.",
+  koner: "Howdy, name's Keoni Smith. I'm Immanuel's cousin. I made the music you're listening to right now if you have audio enabled.",
   statue: "Derek the Sign. Artist Commision. Do not steal.",
   bed: `This where I sleep. Great ideas comes when I'm lying on my bed. When an idea strikes, I often have to write it down or else I won't be able to sleep because my mental energy is consumed by it.`,
   resume: `This is my desk and on it is my resume. <a href="https://github.com/JSLegendDev/Resume/blob/main/JSLegend%20Resume-1.pdf" target="_blank">Check it out?</a>
