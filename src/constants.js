@@ -28,6 +28,11 @@ export const dialogueData = {
   "Don't tell anyone I told you this, but there's a hidden area on the path to the right, just go between the groups of yellow flowers.",
   "I am going to pretend this conversation never happened."
   ],
+  info: [
+    `Hi! Welcome to the information booth. This park was made with the Kaboom.js library which is a library for making games in JavaScript.
+    Text is rendered with HTML/CSS. Here's the github link to the code for the website <a href="https://github.com/immanuelpabon/immanuelpabon.github.io" target="_blank">here</a>.`,
+    ],
+  june: `Zzz... (She's dreaming about finding bugs.)`,
   down_sign: "Portfolio Park exit.",
   up_sign: "Test",
   left_sign: "Test",

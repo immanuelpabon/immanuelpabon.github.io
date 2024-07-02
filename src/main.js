@@ -22,6 +22,10 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "brush-idle": { from: 410, to: 413, loop: true, speed: 6 },
     "son-idle": { from: 870, to: 872, loop: true, speed: 6 },
     "kid-idle": { from: 831, to: 832, loop: true, speed: 6 },
+    "spy-idle": { from: 181, to: 182, loop: true, speed: 3 },
+    "omori-idle": { from: 214, to: 217, loop: true, speed: 6 },
+    "chert-idle": { from: 218, to: 221, loop: true, speed: 6 },
+    "june-idle": { from: 837, to: 839, loop: true, speed: 1 }
   },
 });
 
@@ -76,6 +80,14 @@ k.scene("main", async () => {
     "fire",
   ]);
 
+  const june = k.add([
+    k.sprite("spritesheet", { anim: "june-idle" }),
+    k.anchor("center"),
+    k.pos(1510, 1110),
+    k.scale(scaleFactor),
+    "june",
+  ]);
+
   const koner = k.add([
     k.sprite("spritesheet", { anim: "koner-idle" }),
     k.anchor("center"),
@@ -106,6 +118,30 @@ k.scene("main", async () => {
     k.pos(800, 100),
     k.scale(scaleFactor),
     "kid",
+  ]);
+
+  const spy = k.add([
+    k.sprite("spritesheet", { anim: "spy-idle" }),
+    k.anchor("center"),
+    k.pos(2460, 470),
+    k.scale(scaleFactor),
+    "spy",
+  ]);
+
+  const chert = k.add([
+    k.sprite("spritesheet", { anim: "chert-idle" }),
+    k.anchor("center"),
+    k.pos(2550, 430),
+    k.scale(scaleFactor),
+    "chert",
+  ]);
+
+  const omori = k.add([
+    k.sprite("spritesheet", { anim: "omori-idle" }),
+    k.anchor("center"),
+    k.pos(2390, 430),
+    k.scale(scaleFactor),
+    "omori",
   ]);
 
    const sparkle1 = k.add([
