@@ -58,9 +58,6 @@ function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
 // Set background color (optional, as we now use a tiled image)
 k.setBackground(k.Color.fromHex("#311047"));
 
-// Dialogue index for sign
-let signDialogueIndex = 0;
-
 k.scene("main", async () => {
   const mapData = await (await fetch("./map.json")).json();
   const layers = mapData.layers;
@@ -187,9 +184,11 @@ k.scene("main", async () => {
       speed: 250,
       direction: "down",
       isInDialogue: false,
+      currentDialogueIndex: {}
     },
     "player",
   ]);
+
 
   for (const layer of layers) {
     if (layer.name === "boundaries") {
@@ -204,22 +203,18 @@ k.scene("main", async () => {
         ]);
 
         if (boundary.name) {
+          player.currentDialogueIndex[boundary.name] = 0; // Initialize dialogue index for each object
           player.onCollide(boundary.name, () => {
-            if (boundary.name === "sign") {
-              player.isInDialogue = true;
-              displayDialogue(
-                dialogueData["sign"][signDialogueIndex],
-                () => {
-                  player.isInDialogue = false;
-                  signDialogueIndex = (signDialogueIndex + 1) % dialogueData["sign"].length;
-                }
-              );
-            } else {
-              player.isInDialogue = true;
-              displayDialogue(
-                dialogueData[boundary.name],
-                () => (player.isInDialogue = false)
-              );
+            player.isInDialogue = true;
+            const dialogueKey = boundary.name;
+            const dialogueLines = dialogueData[dialogueKey];
+
+            if (dialogueLines) {
+              const currentLine = dialogueLines[player.currentDialogueIndex[dialogueKey]];
+              displayDialogue(currentLine, () => {
+                player.isInDialogue = false;
+                player.currentDialogueIndex[dialogueKey] = (player.currentDialogueIndex[dialogueKey] + 1) % dialogueLines.length; // Cycle through dialogue lines
+              });
             }
           });
         }
