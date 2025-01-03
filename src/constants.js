@@ -42,7 +42,7 @@ export const dialogueData = {
     `...`,
   ],
   art: [
-    `Welcome to the art gallery. This will be where you can see all of Immanuel's art assets. Still under construction though, sorry dude.`,
+    `Welcome to the art gallery. This is where you can see all of Immanuel's art assets. Here's the <a href="https://www.flickr.com/people/201143644@N07/" target="_blank">link</a>.`,
     `My dad owns this whole park, he was able to get me this job after I dropped out of college.`,
     `I'm not even a fan of paintings, I am more into sculptures. I even did a job for that Sign-o dude last month.`,
     `It's crazy, some of my best work. I went a little overboard though, made it out of solid gold.`,
@@ -82,6 +82,12 @@ export const dialogueData = {
   ],
   resume: [
     `It's a resume. Its covered in blue paint.`,
+  ],
+  present: [
+    `test!`,
+  ],
+  inspiration: [
+    `Performing tonight: The Inspirations!`,
   ],
   exit: [
     `If you want to exit Immanuel's portfolio, You can close the tab. The world drops off here.`,
