@@ -26,7 +26,7 @@ export const dialogueData = {
   ],
   kid: [
     `AHA! Trying to escape the boundaries of the campsite are we? Well if the tape wasn't obvious enough, you can't. So begone.`,
-    `Begone I say.`,
+    `No water-slide-roller-coaster-hybrid for you.`,
     `...`,
   ],
   info: [
@@ -84,6 +84,9 @@ export const dialogueData = {
   exit: [
     `If you want to exit Immanuel's portfolio, You can close the tab. The world drops off here.`,
   ],
+  how: [
+    `how are you reading this?`
+  ]
 };
 /* tv: `That's my TV. I've been watching tech youtubers a lot recently like :
 <a href="https://www.youtube.com/@ThePrimeTimeagen" target="_blank">Theprimeagen</a>, <a href="https://www.youtube.com/@t3dotgg" target="_blank">Theo - t3.gg</a>,

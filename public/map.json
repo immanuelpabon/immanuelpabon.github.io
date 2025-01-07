@@ -1,12 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"json",
-         "target":"map.json"
-        }
-    },
  "height":34,
  "infinite":false,
  "layers":[
@@ -1922,10 +1914,21 @@
                  "width":15.875,
                  "x":640.125,
                  "y":145
+                }, 
+                {
+                 "height":12.5454545454545,
+                 "id":214,
+                 "name":"how",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":11.0909090909091,
+                 "x":242.363636363636,
+                 "y":19.4545454545455
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1953,7 +1956,7 @@
          "y":0
         }],
  "nextlayerid":43,
- "nextobjectid":214,
+ "nextobjectid":217,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
