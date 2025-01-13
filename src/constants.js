@@ -35,7 +35,7 @@ export const dialogueData = {
     `...`,
   ],
   art: [
-    `Welcome to the art gallery. This is where you can see all of Immanuel's art assets. Here's the <a href="https://www.flickr.com/people/201143644@N07/" target="_blank">link</a>.`,
+    `Welcome to the art gallery. This is where you can see all of Immanuel's art assets. Here's the <a href="https://www.flickr.com/photos/201143644@N07/albums" target="_blank">link</a>.`,
     `...`,
   ],
   june: [
@@ -73,13 +73,14 @@ export const dialogueData = {
     `It's a resume. Its covered in blue paint.`,
   ],
   present: [
-    `test!`,
+    `Welcome to the presentation hub. This is where you can see all of Immanuel's talks. Here's a <a href="https://www.youtube.com/playlist?list=PLyWH_hnD0HMky-I6MD8xS6pWzKlZ-1ioM" target="_blank">playlist</a>.`,
+    '...',
   ],
   inspiration: [
-    `Performing tonight: The Inspirations!`,
+    'Performing tonight: The Inspirations!',
   ],
   robot: [
-    `H-H-Hello. W-W-We made an AI presentation tool combining C-C-Chatgpt and Elevenlabs, when using AI was still c-c-cool. Here's the <a href="https://github.com/aipresenter/aipresenter" target="_blank">l-l-link</a>. `,
+    `H-H-Hello. Pardon my damaged voicebox. We made an AI presentation tool c-c-combining Chatgpt and Elevenlabs, when using AI was still cool. Here's the <a href="https://github.com/aipresenter/aipresenter" target="_blank">l-l-link</a>. `,
   ],
   exit: [
     `If you want to exit Immanuel's portfolio, You can close the tab. The world drops off here.`,
