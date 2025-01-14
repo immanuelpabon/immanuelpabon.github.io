@@ -77,7 +77,7 @@ export const dialogueData = {
     '...',
   ],
   inspiration: [
-    'Performing tonight: The Inspirations!',
+    'Performing tonight: The Inspirations! Lead Singer: Team Fortress 2, Violinist: Omori, Drummer: Outer Wilds.',
   ],
   robot: [
     `H-H-Hello. Pardon my damaged voicebox. We made an AI presentation tool c-c-combining Chatgpt and Elevenlabs, when using AI was still cool. Here's the <a href="https://github.com/aipresenter/aipresenter" target="_blank">l-l-link</a>. `,
