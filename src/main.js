@@ -27,7 +27,8 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "spy-idle": { from: 181, to: 182, loop: true, speed: 3 },
     "omori-idle": { from: 214, to: 217, loop: true, speed: 6 },
     "chert-idle": { from: 218, to: 221, loop: true, speed: 6 },
-    "june-idle": { from: 837, to: 839, loop: true, speed: 1 }
+    "june-idle": { from: 837, to: 839, loop: true, speed: 1 },
+    "noob-idle": { from: 866, to: 869, loop: true, speed: 4 }
   },
 });
 
@@ -91,6 +92,14 @@ k.scene("main", async () => {
     k.sprite("spritesheet", { anim: "koner-idle" }),
     k.anchor("center"),
     k.pos(480, 1760),
+    k.scale(scaleFactor),
+    "koner",
+  ]);
+
+   const noob = k.add([
+    k.sprite("spritesheet", { anim: "noob-idle" }),
+    k.anchor("center"),
+    k.pos(1900, 640),
     k.scale(scaleFactor),
     "koner",
   ]);

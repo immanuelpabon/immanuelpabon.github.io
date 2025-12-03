@@ -1619,13 +1619,13 @@
                  "y":51
                 }, 
                 {
-                 "height":52,
+                 "height":50.7272727272727,
                  "id":168,
                  "name":"art",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":92.75,
+                 "width":36.7499999999999,
                  "x":417.25,
                  "y":113.75
                 }, 
@@ -1925,6 +1925,28 @@
                  "width":11.0909090909091,
                  "x":242.363636363636,
                  "y":19.4545454545455
+                }, 
+                {
+                 "height":51.2727545454545,
+                 "id":217,
+                 "name":"roblox",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":28.75,
+                 "x":467.625,
+                 "y":113.272713636364
+                }, 
+                {
+                 "height":52.7273,
+                 "id":218,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":28.75,
+                 "x":444.715909090909,
+                 "y":111.63635
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1956,7 +1978,7 @@
          "y":0
         }],
  "nextlayerid":43,
- "nextobjectid":217,
+ "nextobjectid":219,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
