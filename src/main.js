@@ -24,7 +24,6 @@ k.loadSprite("spritesheet", "./WimploSpritesheet.png", {
     "brush-idle": { from: 410, to: 413, loop: true, speed: 6 },
     "son-idle": { from: 870, to: 872, loop: true, speed: 6 },
     "son2-idle": { from: 797, to: 799, loop: true, speed: 6 },
-    "robot-idle": { from: 758, to: 760, loop: true, speed: 1 },
     "kid-idle": { from: 831, to: 832, loop: true, speed: 6 },
     "spy-idle": { from: 181, to: 182, loop: true, speed: 3 },
     "omori-idle": { from: 214, to: 217, loop: true, speed: 6 },
@@ -131,14 +130,6 @@ k.scene("main", async () => {
     "son2",
   ]);
 
-  const robot = k.add([
-    k.sprite("spritesheet", { anim: "robot-idle" }),
-    k.anchor("center"),
-    k.pos(95, 1050),
-    k.scale(scaleFactor),
-    "robot",
-  ]);
-
   const kid = k.add([
     k.sprite("spritesheet", { anim: "kid-idle" }),
     k.anchor("center"),
@@ -243,6 +234,7 @@ k.scene("main", async () => {
 
   const player = k.add([
     k.sprite("spritesheet", { anim: "idle-down" }),
+    k.z(600),
     k.area({
       shape: new k.Rect(k.vec2(0, 3), 10, 10),
     }),
@@ -317,7 +309,7 @@ k.scene("main", async () => {
   });
 
   k.onMouseDown((mouseBtn) => {
-    if (mouseBtn !== "left" || player.isInDialogue) return;
+    if (mouseBtn !== "left" || player.isInDialogue || !started) return;
 
     const worldMousePos = k.toWorld(k.mousePos());
     player.moveTo(worldMousePos, player.speed);
@@ -398,7 +390,7 @@ k.scene("main", async () => {
 
     if (nbOfKeyPressed > 1) return;
 
-    if (player.isInDialogue) return;
+    if (player.isInDialogue || !started) return;
     if (keyMap[0]) {
       player.flipX = false;
       if (player.curAnim() !== "walk-side") player.play("walk-side");
@@ -429,11 +421,46 @@ k.scene("main", async () => {
     }
   });
 
-  initRain(k, {
-    onWeather: (raining) => {
-      for (const umbrella of umbrellas) umbrella.opacity = raining ? 1 : 0;
+  let started = false;
+  let curtain = 1;
+
+  k.add([
+    k.pos(0, 0),
+    k.z(500),
+    k.fixed(),
+    {
+      draw() {
+        if (curtain <= 0) return;
+        k.drawRect({
+          width: k.width(),
+          height: k.height(),
+          pos: k.vec2(0, 0),
+          color: k.rgb(0, 0, 0),
+          opacity: curtain,
+          fixed: true,
+        });
+      },
+      update() {
+        if (!started || curtain <= 0) return;
+        curtain = Math.max(0, curtain - k.dt() / 1.5);
+        audio.setMusicVolume(0.5 * (1 - curtain));
+      },
     },
-    onVolume: (level) => audio.setRainVolume(level),
+  ]);
+
+  const startScreen = document.getElementById("start-screen");
+
+  startScreen.addEventListener("click", () => {
+    started = true;
+    startScreen.style.display = "none";
+    document.querySelector(".note").style.display = "flex";
+
+    initRain(k, {
+      onWeather: (raining) => {
+        for (const umbrella of umbrellas) umbrella.opacity = raining ? 1 : 0;
+      },
+      onVolume: (level) => audio.setRainVolume(level),
+    });
   });
 
   setCamScale(k);

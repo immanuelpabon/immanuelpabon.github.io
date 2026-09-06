@@ -5,15 +5,7 @@ const musicSources = [
 
 const rainSources = [["./rain.mp3", "audio/mpeg"]];
 
-const unlockEvents = [
-  "pointerdown",
-  "pointerup",
-  "touchstart",
-  "touchend",
-  "mouseup",
-  "click",
-  "keydown",
-];
+const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown"];
 
 async function pickSource(sources) {
   const probe = document.createElement("audio");
@@ -58,7 +50,7 @@ export function initAudio(k) {
   let unlocked = false;
   const isUnlocked = () => unlocked;
 
-  const music = loadTrack(k, "backgroundMusic", musicSources, 0.5, isUnlocked);
+  const music = loadTrack(k, "backgroundMusic", musicSources, 0, isUnlocked);
   const rain = loadTrack(k, "rainAmbience", rainSources, 0, isUnlocked);
 
   const unlock = () => {
@@ -80,17 +72,19 @@ export function initAudio(k) {
     // Safari can refuse the first attempts, so keep listening until it takes
     if (ctx && ctx.state === "running" && music.handle) {
       for (const event of unlockEvents) {
-        window.removeEventListener(event, unlock, true);
+        window.removeEventListener(event, unlock);
       }
     }
   };
 
-  // Capture phase, so we see the touch before kaboom calls preventDefault on it
   for (const event of unlockEvents) {
-    window.addEventListener(event, unlock, true);
+    window.addEventListener(event, unlock);
   }
 
   return {
+    setMusicVolume(level) {
+      music.setVolume(level);
+    },
     setRainVolume(level) {
       rain.setVolume(level * 0.5);
     },

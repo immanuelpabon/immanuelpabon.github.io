@@ -70,6 +70,22 @@
         margin-top: 1rem;
       }
 
+      #start-screen {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        padding: 0;
+        font-family: monogram, monospace;
+        font-size: 2rem;
+        color: rgb(238, 238, 238);
+        cursor: pointer;
+        user-select: none;
+      }
+
       .note {
         position: absolute;
         left: 5%;
@@ -82,7 +98,9 @@
     </style>
     <div id="app">
       <div>
-        <p class="note">Tap/Click around to move</p>
+        <p class="note" style="display: none">Tap/Click around to move</p>
+
+        <button id="start-screen">Press to begin</button>
 
         <div id="textbox-container" style="display: none">
           <div id="textbox">

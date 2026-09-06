@@ -35,7 +35,8 @@ export const dialogueData = {
     `...`,
   ],
   art: [
-    `Welcome to the art gallery. This is where you can see all of Immanuel's art assets. Here's the <a href="https://www.flickr.com/photos/201143644@N07/albums" target="_blank">link</a>.`,
+    `Welcome to the art gallery. This would be where you could see a bunch of cool art, but a blue bird turned into a X and stole my job.`,
+    `Now I just loiter. Beats working though, and I think thats the real Mona Lisa.`,
     `...`,
   ],
   june: [
@@ -54,7 +55,7 @@ export const dialogueData = {
     `Art Gallery (↑) Show Stage (→).`,
   ],
   entrance_sign: [
-    `Portfolio Park (↑). Parking: $12.00.`,
+    `Portfolio Park (↑). Parking: $38`,
   ],
   lake_sign: [
     "Audio Lake (↓).",
@@ -63,7 +64,7 @@ export const dialogueData = {
     "I'm a tree!",
   ],
   koner: [
-    "Howdy, name's Keoni Smith. I'm Immanuel's cousin. I made the music you're listening to right now if you have audio enabled.",
+    "Howdy, name's Keoni. I'm Immanuel's cousin. I made the music you're listening to right now if you have audio enabled.",
     "♫ Hmmmmmmmmm hmmmmm hmmmmmm... ♫",
   ],
   statue: [
@@ -73,29 +74,27 @@ export const dialogueData = {
     `It's a resume. Its covered in blue paint.`,
   ],
   present: [
-    `Welcome to the presentation hub. This is where you can see all of Immanuel's talks. Here's a <a href="https://www.youtube.com/playlist?list=PLyWH_hnD0HMky-I6MD8xS6pWzKlZ-1ioM" target="_blank">playlist</a>.`,
+    `Welcome to the presentation hub. This is where you can see all of the music Immanuel has worked on in collaboration with Haru. Here's the <a href="https://www.youtube.com/@Wimplo518/videos" target="_blank">channel</a>.`,
     '...',
   ],
   inspiration: [
     'Performing tonight: The Inspirations! Lead Singer: Team Fortress 2, Violinist: Omori, Drummer: Outer Wilds.',
   ],
-  robot: [
-    `H-H-Hello. Pardon my damaged voicebox. We made an AI presentation tool c-c-combining Chatgpt and Elevenlabs, when using AI was still cool. Here's the <a href="https://github.com/aipresenter/aipresenter" target="_blank">l-l-link</a>. `,
-  ],
   exit: [
-    `If you want to exit Immanuel's portfolio, You can close the tab. The world drops off here.`,
+    `If you want to exit Immanuel's portfolio, You can close the tab. This is the end of the world.`,
   ],
   how: [
     `how are you reading this?`
   ],
   discord: [
-    `discord`,
+    `My discord ID is combatspok, or you could add me directly by clicking <a href="https://discord.com/users/252738561470758913" target="_blank">here</a>.`,
   ],
   twitter: [
-    `twitter`,
+    `My twitter is @wimplo518. Here's a <a href="https://x.com/wimplo518" target="_blank">link</a>.`,
   ],
   roblox: [
-    `Immanuel has worked for multiple roblox games, and have collaborated with Roblox for an official event, see posts about that on his <a href="https://x.com/Wimplo518" target="_blank">Roblox Twitter</a>.`
+    `Hi! I'm Immanuel(Wimplo)! If you scanned the QR code and are looking to contact me, talk to my friends up ahead!`,
+    `Enjoy your time at portfolio park!`
   ]
 };
 /* tv: `That's my TV. I've been watching tech youtubers a lot recently like :
