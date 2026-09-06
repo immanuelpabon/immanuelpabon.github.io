@@ -5,7 +5,7 @@ const musicSources = [
 
 const rainSources = [["./rain.mp3", "audio/mpeg"]];
 
-const unlockEvents = ["pointerdown", "touchstart", "keydown"];
+const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown"];
 
 const debug = location.search.includes("debug");
 
@@ -105,7 +105,8 @@ export function initAudio(k) {
     music.start();
     rain.start();
 
-    if (music.handle) {
+    // Safari can refuse the first attempts, so keep listening until it takes
+    if (ctx && ctx.state === "running" && music.handle) {
       for (const event of unlockEvents) {
         window.removeEventListener(event, unlock);
       }
