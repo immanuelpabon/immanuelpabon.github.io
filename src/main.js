@@ -102,7 +102,7 @@ k.scene("main", async () => {
   const noob = k.add([
     k.sprite("spritesheet", { anim: "noob-idle" }),
     k.anchor("center"),
-    k.pos(1502, 1696),
+    k.pos(1383, 1822),
     k.scale(scaleFactor),
     "noob",
   ]);
@@ -174,7 +174,7 @@ k.scene("main", async () => {
   const twitter = k.add([
     k.sprite("spritesheet", { anim: "twitter-idle" }),
     k.anchor("center"),
-    k.pos(1376, 1618),
+    k.pos(1439, 1619),
     k.scale(scaleFactor),
     "twitter",
   ]);
@@ -230,9 +230,9 @@ k.scene("main", async () => {
     [koner, k.vec2(-26, -22)],
   ];
 
-  const umbrellas = umbrellaOwners.map(([npc, offset]) =>
+  const umbrellas = umbrellaOwners.map(([npc, offset], i) =>
     k.add([
-      k.sprite("spritesheet", { frame: k.choose(umbrellaFrames) }),
+      k.sprite("spritesheet", { frame: umbrellaFrames[i % umbrellaFrames.length] }),
       k.anchor("center"),
       k.pos(npc.pos.add(offset)),
       k.scale(scaleFactor),

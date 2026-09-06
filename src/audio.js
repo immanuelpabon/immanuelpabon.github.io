@@ -5,9 +5,15 @@ const musicSources = [
 
 const rainSources = [["./rain.mp3", "audio/mpeg"]];
 
-const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown"];
-
-const debug = location.search.includes("debug");
+const unlockEvents = [
+  "pointerdown",
+  "pointerup",
+  "touchstart",
+  "touchend",
+  "mouseup",
+  "click",
+  "keydown",
+];
 
 async function pickSource(sources) {
   const probe = document.createElement("audio");
@@ -22,15 +28,11 @@ async function pickSource(sources) {
 }
 
 function loadTrack(k, name, sources, volume, isUnlocked) {
-  const track = { handle: null, ready: false, volume, src: null, error: null };
+  const track = { handle: null, ready: false, volume };
 
   track.start = () => {
     if (track.handle || !track.ready || !isUnlocked()) return;
-    try {
-      track.handle = k.play(name, { loop: true, volume: track.volume });
-    } catch (err) {
-      track.error = String(err);
-    }
+    track.handle = k.play(name, { loop: true, volume: track.volume });
   };
 
   track.setVolume = (v) => {
@@ -39,47 +41,17 @@ function loadTrack(k, name, sources, volume, isUnlocked) {
   };
 
   pickSource(sources).then((src) => {
-    track.src = src;
-    if (!src) {
-      track.error = "no playable source";
-      return;
-    }
+    if (!src) return;
 
     k.loadSound(name, src)
       .onLoad(() => {
         track.ready = true;
         track.start();
       })
-      .onError((err) => {
-        track.error = String(err);
-      });
+      .onError((err) => console.error(name, err));
   });
 
   return track;
-}
-
-function showDebug(k, music, rain, unlocked) {
-  const probe = document.createElement("audio");
-  let el = document.getElementById("audio-debug");
-
-  if (!el) {
-    el = document.createElement("pre");
-    el.id = "audio-debug";
-    el.style.cssText =
-      "position:absolute;top:0;left:0;z-index:9;margin:0;padding:8px;" +
-      "background:rgba(0,0,0,0.8);color:#7f7;font:12px monospace;white-space:pre-wrap";
-    document.body.appendChild(el);
-  }
-
-  el.textContent = [
-    `ctx      ${k.audioCtx ? k.audioCtx.state : "missing"}`,
-    `unlocked ${unlocked()}`,
-    `mp3      "${probe.canPlayType("audio/mpeg")}"`,
-    `ogg      "${probe.canPlayType('audio/ogg; codecs="vorbis"')}"`,
-    `music    ${music.src} ready=${music.ready} playing=${!!music.handle}`,
-    `rain     ${rain.src} ready=${rain.ready} playing=${!!rain.handle}`,
-    `error    ${music.error || rain.error || "none"}`,
-  ].join("\n");
 }
 
 export function initAudio(k) {
@@ -108,17 +80,14 @@ export function initAudio(k) {
     // Safari can refuse the first attempts, so keep listening until it takes
     if (ctx && ctx.state === "running" && music.handle) {
       for (const event of unlockEvents) {
-        window.removeEventListener(event, unlock);
+        window.removeEventListener(event, unlock, true);
       }
     }
   };
 
+  // Capture phase, so we see the touch before kaboom calls preventDefault on it
   for (const event of unlockEvents) {
-    window.addEventListener(event, unlock);
-  }
-
-  if (debug) {
-    setInterval(() => showDebug(k, music, rain, isUnlocked), 500);
+    window.addEventListener(event, unlock, true);
   }
 
   return {
