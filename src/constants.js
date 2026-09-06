@@ -88,6 +88,12 @@ export const dialogueData = {
   how: [
     `how are you reading this?`
   ],
+  discord: [
+    `discord`,
+  ],
+  twitter: [
+    `twitter`,
+  ],
   roblox: [
     `Immanuel has worked for multiple roblox games, and have collaborated with Roblox for an official event, see posts about that on his <a href="https://x.com/Wimplo518" target="_blank">Roblox Twitter</a>.`
   ]

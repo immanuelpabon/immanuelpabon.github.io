@@ -18,21 +18,23 @@ export function displayDialogue(text, onDisplayEnd) {
 
   const closeBtn = document.getElementById("close");
 
+  function onKeyPress(key) {
+    if (key.code === "Enter") {
+      closeBtn.click();
+    }
+  }
+
   function onCloseBtnClick() {
     onDisplayEnd();
     dialogueUI.style.display = "none";
     dialogue.innerHTML = "";
     clearInterval(intervalRef);
     closeBtn.removeEventListener("click", onCloseBtnClick);
+    window.removeEventListener("keypress", onKeyPress);
   }
 
   closeBtn.addEventListener("click", onCloseBtnClick);
-
-  addEventListener("keypress", (key) => {
-    if (key.code === "Enter") {
-      closeBtn.click();
-    }
-  });
+  window.addEventListener("keypress", onKeyPress);
 }
 
 export function setCamScale(k) {

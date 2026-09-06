@@ -1,9 +1,11 @@
 import { dialogueData, scaleFactor } from "./constants";
 import { k } from "./kaboomCtx";
 import { displayDialogue, setCamScale } from "./utils";
+import { initAudio } from "./audio";
+import { initRain } from "./rain";
 
 // Load sprites
-k.loadSprite("spritesheet", "./spritesheet.png", {
+k.loadSprite("spritesheet", "./WimploSpritesheet.png", {
   sliceX: 39,
   sliceY: 31,
   anims: {
@@ -28,15 +30,16 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
     "omori-idle": { from: 214, to: 217, loop: true, speed: 6 },
     "chert-idle": { from: 218, to: 221, loop: true, speed: 6 },
     "june-idle": { from: 837, to: 839, loop: true, speed: 1 },
-    "noob-idle": { from: 866, to: 869, loop: true, speed: 4 }
+    "noob-idle": { from: 866, to: 869, loop: true, speed: 4 },
+    "twitter-idle": { from: 981, to: 982, loop: true, speed: 4 },
+    "discord-idle": { from: 1020, to: 1021, loop: true, speed: 3 }
   },
 });
 
 k.loadSprite("map", "./map.png");
 k.loadSprite("background", "./backgroundTrees.png");
 
-// Load the music using k.loadSound()
-k.loadSound("backgroundMusic", "./Elijah Would Be Blue.ogg");
+const audio = initAudio(k);
 
 // Function to create a tiled background
 function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
@@ -96,12 +99,12 @@ k.scene("main", async () => {
     "koner",
   ]);
 
-   const noob = k.add([
+  const noob = k.add([
     k.sprite("spritesheet", { anim: "noob-idle" }),
     k.anchor("center"),
-    k.pos(1900, 640),
+    k.pos(1502, 1696),
     k.scale(scaleFactor),
-    "koner",
+    "noob",
   ]);
 
   const brush = k.add([
@@ -125,7 +128,7 @@ k.scene("main", async () => {
     k.anchor("center"),
     k.pos(2400, 630),
     k.scale(scaleFactor),
-    "son",
+    "son2",
   ]);
 
   const robot = k.add([
@@ -133,7 +136,7 @@ k.scene("main", async () => {
     k.anchor("center"),
     k.pos(95, 1050),
     k.scale(scaleFactor),
-    "son",
+    "robot",
   ]);
 
   const kid = k.add([
@@ -168,7 +171,23 @@ k.scene("main", async () => {
     "omori",
   ]);
 
-   const sparkle1 = k.add([
+  const twitter = k.add([
+    k.sprite("spritesheet", { anim: "twitter-idle" }),
+    k.anchor("center"),
+    k.pos(1376, 1618),
+    k.scale(scaleFactor),
+    "twitter",
+  ]);
+
+  const discord = k.add([
+    k.sprite("spritesheet", { anim: "discord-idle" }),
+    k.anchor("center"),
+    k.pos(1185, 1620),
+    k.scale(scaleFactor),
+    "discord",
+  ]);
+
+  const sparkle1 = k.add([
     k.sprite("spritesheet", { anim: "sparkle_1" }),
     k.anchor("center"),
     k.pos(2575, 1730),
@@ -197,6 +216,30 @@ k.scene("main", async () => {
     k.scale(scaleFactor),
     "sign",
   ]);
+
+  const umbrellaFrames = [984, 985, 986];
+  const umbrellaOffset = k.vec2(-20, -22);
+  const umbrellaOwners = [
+    [noob, umbrellaOffset],
+    [twitter, k.vec2(-26, -22)],
+    [discord, umbrellaOffset],
+    [son, umbrellaOffset],
+    [son2, umbrellaOffset],
+    [kid, umbrellaOffset],
+    [fire, k.vec2(-20, -10)],
+    [koner, k.vec2(-26, -22)],
+  ];
+
+  const umbrellas = umbrellaOwners.map(([npc, offset]) =>
+    k.add([
+      k.sprite("spritesheet", { frame: k.choose(umbrellaFrames) }),
+      k.anchor("center"),
+      k.pos(npc.pos.add(offset)),
+      k.scale(scaleFactor),
+      k.opacity(0),
+      "umbrella",
+    ])
+  );
 
   const player = k.add([
     k.sprite("spritesheet", { anim: "idle-down" }),
@@ -232,6 +275,7 @@ k.scene("main", async () => {
         if (boundary.name) {
           player.currentDialogueIndex[boundary.name] = 0; // Initialize dialogue index for each object
           player.onCollide(boundary.name, () => {
+            if (player.isInDialogue) return;
             player.isInDialogue = true;
             const dialogueKey = boundary.name;
             const dialogueLines = dialogueData[dialogueKey];
@@ -260,32 +304,6 @@ k.scene("main", async () => {
         }
       }
     }
-
-    // Define a variable to hold the music instance
-    let music;
-
-    // Function to start playing music
-    const startMusic = () => {
-      if (!music || !music.isPlaying()) {
-        music = k.play("backgroundMusic", {
-          loop: true,
-          volume: 0.5, // Adjust volume here (0.5 means 50% volume)
-        });
-      }
-    };
-
-    // Handle user interaction to start/resume the audio context
-    const resumeAudioContext = () => {
-      if (k.audioContext && k.audioContext.state === "suspended") {
-        k.audioContext.resume().then(startMusic);
-      } else {
-        startMusic();
-      }
-    };
-
-    // Attach event listeners to user interactions
-    window.addEventListener("click", resumeAudioContext);
-    window.addEventListener("keydown", resumeAudioContext);
   }
 
   setCamScale(k);
@@ -409,6 +427,13 @@ k.scene("main", async () => {
       player.direction = "down";
       player.move(0, player.speed);
     }
+  });
+
+  initRain(k, {
+    onWeather: (raining) => {
+      for (const umbrella of umbrellas) umbrella.opacity = raining ? 1 : 0;
+    },
+    onVolume: (level) => audio.setRainVolume(level),
   });
 
   setCamScale(k);
