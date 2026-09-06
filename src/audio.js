@@ -1,11 +1,13 @@
 const musicSources = [
-  ["./Elijah Would Be Blue.ogg", 'audio/ogg; codecs="vorbis"'],
   ["./Elijah Would Be Blue.mp3", "audio/mpeg"],
+  ["./Elijah Would Be Blue.ogg", 'audio/ogg; codecs="vorbis"'],
 ];
 
 const rainSources = [["./rain.mp3", "audio/mpeg"]];
 
 const unlockEvents = ["pointerdown", "touchstart", "keydown"];
+
+const debug = location.search.includes("debug");
 
 async function pickSource(sources) {
   const probe = document.createElement("audio");
@@ -20,11 +22,15 @@ async function pickSource(sources) {
 }
 
 function loadTrack(k, name, sources, volume, isUnlocked) {
-  const track = { handle: null, ready: false, volume };
+  const track = { handle: null, ready: false, volume, src: null, error: null };
 
   track.start = () => {
     if (track.handle || !track.ready || !isUnlocked()) return;
-    track.handle = k.play(name, { loop: true, volume: track.volume });
+    try {
+      track.handle = k.play(name, { loop: true, volume: track.volume });
+    } catch (err) {
+      track.error = String(err);
+    }
   };
 
   track.setVolume = (v) => {
@@ -33,14 +39,47 @@ function loadTrack(k, name, sources, volume, isUnlocked) {
   };
 
   pickSource(sources).then((src) => {
-    if (!src) return;
-    k.loadSound(name, src).onLoad(() => {
-      track.ready = true;
-      track.start();
-    });
+    track.src = src;
+    if (!src) {
+      track.error = "no playable source";
+      return;
+    }
+
+    k.loadSound(name, src)
+      .onLoad(() => {
+        track.ready = true;
+        track.start();
+      })
+      .onError((err) => {
+        track.error = String(err);
+      });
   });
 
   return track;
+}
+
+function showDebug(k, music, rain, unlocked) {
+  const probe = document.createElement("audio");
+  let el = document.getElementById("audio-debug");
+
+  if (!el) {
+    el = document.createElement("pre");
+    el.id = "audio-debug";
+    el.style.cssText =
+      "position:absolute;top:0;left:0;z-index:9;margin:0;padding:8px;" +
+      "background:rgba(0,0,0,0.8);color:#7f7;font:12px monospace;white-space:pre-wrap";
+    document.body.appendChild(el);
+  }
+
+  el.textContent = [
+    `ctx      ${k.audioCtx ? k.audioCtx.state : "missing"}`,
+    `unlocked ${unlocked()}`,
+    `mp3      "${probe.canPlayType("audio/mpeg")}"`,
+    `ogg      "${probe.canPlayType('audio/ogg; codecs="vorbis"')}"`,
+    `music    ${music.src} ready=${music.ready} playing=${!!music.handle}`,
+    `rain     ${rain.src} ready=${rain.ready} playing=${!!rain.handle}`,
+    `error    ${music.error || rain.error || "none"}`,
+  ].join("\n");
 }
 
 export function initAudio(k) {
@@ -53,7 +92,15 @@ export function initAudio(k) {
   const unlock = () => {
     unlocked = true;
 
-    if (k.audioCtx && k.audioCtx.state !== "running") k.audioCtx.resume();
+    const ctx = k.audioCtx;
+    if (ctx) {
+      if (ctx.state !== "running") ctx.resume();
+      // iOS keeps the context silent until a buffer actually plays in the gesture
+      const source = ctx.createBufferSource();
+      source.buffer = ctx.createBuffer(1, 1, 22050);
+      source.connect(ctx.destination);
+      source.start(0);
+    }
 
     music.start();
     rain.start();
@@ -67,6 +114,10 @@ export function initAudio(k) {
 
   for (const event of unlockEvents) {
     window.addEventListener(event, unlock);
+  }
+
+  if (debug) {
+    setInterval(() => showDebug(k, music, rain, isUnlocked), 500);
   }
 
   return {
