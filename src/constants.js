@@ -74,7 +74,7 @@ export const dialogueData = {
     `It's a resume. Its covered in blue paint.`,
   ],
   present: [
-    `Welcome to the presentation hub. This is where you can see all of the music Immanuel has worked on in collaboration with Haru. Here's the <a href="https://www.youtube.com/@Wimplo518/videos" target="_blank">channel</a>.`,
+    `Welcome to the presentation hub. This is where you can see all of the music Immanuel has worked on in collaboration with Vocar. Here's the <a href="https://www.youtube.com/@Wimplo518/videos" target="_blank">channel</a>.`,
     '...',
   ],
   inspiration: [

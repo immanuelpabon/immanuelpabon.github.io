@@ -8,9 +8,11 @@ const rainSources = [["./rain.mp3", "audio/mpeg"]];
 const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown"];
 
 const noiseLength = 6;
+const restartAfterHidden = 5000;
 
 let noiseBuffer = null;
 let unlocked = false;
+let hiddenAt = 0;
 
 function getNoise(ctx) {
   if (noiseBuffer) return noiseBuffer;
@@ -42,6 +44,16 @@ function loadTrack(k, name, sources, volume) {
     start() {
       if (track.handle || !track.ready || !unlocked) return;
       track.handle = k.play(name, { loop: true, volume: track.volume });
+    },
+    restart() {
+      if (!track.ready || !unlocked) return;
+
+      if (track.handle) {
+        track.handle.stop();
+        track.handle = null;
+      }
+
+      track.start();
     },
     setVolume(v) {
       track.volume = v;
@@ -143,21 +155,28 @@ export function initAudio(k) {
     unlocked = true;
 
     const ctx = k.audioCtx;
-    if (ctx) unlockContext(ctx);
+    if (ctx && ctx.state !== "running") unlockContext(ctx);
 
     music.start();
     rain.start();
-
-    if (ctx && ctx.state === "running" && music.handle) {
-      for (const event of unlockEvents) {
-        window.removeEventListener(event, unlock);
-      }
-    }
   }
 
   for (const event of unlockEvents) {
     window.addEventListener(event, unlock);
   }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible") {
+      hiddenAt = Date.now();
+      return;
+    }
+
+    if (!hiddenAt || Date.now() - hiddenAt < restartAfterHidden) return;
+
+    hiddenAt = 0;
+    music.restart();
+    rain.restart();
+  });
 
   return {
     thunder(level) {
