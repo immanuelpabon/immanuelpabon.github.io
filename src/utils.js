@@ -2,6 +2,7 @@ import { k } from "./kaboomCtx";
 
 const typeSpeed = 30;
 const blipVolume = 0.1;
+const blipAttack = 0.025;
 
 function voicePitch(speaker) {
   let sum = 0;
@@ -25,7 +26,7 @@ function blip(pitch) {
   filter.frequency.value = pitch * 2.5;
 
   gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(blipVolume, now + 0.012);
+  gain.gain.linearRampToValueAtTime(blipVolume, now + blipAttack);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
 
   osc.connect(filter);

@@ -6,7 +6,6 @@ import { initRain } from "./rain";
 import { initLeaves } from "./leaves";
 import { initDust } from "./dust";
 
-// Load sprites
 k.loadSprite("spritesheet", "./WimploSpritesheet.png", {
   sliceX: 39,
   sliceY: 31,
@@ -25,14 +24,14 @@ k.loadSprite("spritesheet", "./WimploSpritesheet.png", {
     "koner-idle": { from: 792, to: 795, loop: true, speed: 6 },
     "brush-idle": { from: 410, to: 413, loop: true, speed: 6 },
     "son-idle": { from: 870, to: 872, loop: true, speed: 6 },
-    "son2-idle": { from: 797, to: 799, loop: true, speed: 6 },
+    "top_hat-idle": { from: 802, to: 803, loop: true, speed: 3 },
     "kid-idle": { from: 831, to: 832, loop: true, speed: 6 },
     "spy-idle": { from: 181, to: 182, loop: true, speed: 3 },
     "omori-idle": { from: 214, to: 217, loop: true, speed: 6 },
     "chert-idle": { from: 218, to: 221, loop: true, speed: 6 },
     "june-idle": { from: 837, to: 839, loop: true, speed: 1 },
     "noob-idle": { from: 866, to: 869, loop: true, speed: 4 },
-    "twitter-idle": { from: 981, to: 982, loop: true, speed: 4 },
+    "twitter-idle": { from: 942, to: 943, loop: true, speed: 4 },
     "discord-idle": { from: 1020, to: 1021, loop: true, speed: 3 }
   },
 });
@@ -45,7 +44,6 @@ const audio = initAudio(k);
 const dialogueZoom = 1.12;
 const zoomEase = 4;
 
-// Function to create a tiled background
 function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
   const scaledTileWidth = tileWidth * scaleFactor;
   const scaledTileHeight = tileHeight * scaleFactor;
@@ -65,14 +63,12 @@ function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
   }
 }
 
-// Set background color (optional, as we now use a tiled image)
 k.setBackground(k.Color.fromHex("#311047"));
 
 k.scene("main", async () => {
   const mapData = await (await fetch("./map.json")).json();
   const layers = mapData.layers;
 
-  // Call the function to create the tiled background
   const mapWidth = 656 * scaleFactor;
   const mapHeight = 528 * scaleFactor;
   createTiledBackground(mapWidth, mapHeight, 160, 160);
@@ -82,7 +78,7 @@ k.scene("main", async () => {
   const fire = k.add([
     k.sprite("spritesheet", { anim: "fire-idle" }),
     k.anchor("center"),
-    k.pos(1314, 980), // Setting a default position for the fire
+    k.pos(1314, 980),
     k.scale(scaleFactor),
     "fire",
   ]);
@@ -127,12 +123,12 @@ k.scene("main", async () => {
     "son",
   ]);
 
-  const son2 = k.add([
-    k.sprite("spritesheet", { anim: "son2-idle" }),
+  const top_hat = k.add([
+    k.sprite("spritesheet", { anim: "top_hat-idle" }),
     k.anchor("center"),
     k.pos(2400, 630),
     k.scale(scaleFactor),
-    "son2",
+    "top_hat",
   ]);
 
   const kid = k.add([
@@ -215,12 +211,14 @@ k.scene("main", async () => {
 
   const umbrellaFrames = [984, 985, 986];
   const umbrellaOffset = k.vec2(-20, -22);
+  const playerUmbrellaFrame = 1024;
+  const playerUmbrellaOffset = k.vec2(-26, -16);
   const umbrellaOwners = [
     [noob, umbrellaOffset],
     [twitter, k.vec2(-26, -22)],
     [discord, umbrellaOffset],
     [son, umbrellaOffset],
-    [son2, umbrellaOffset],
+    [top_hat, umbrellaOffset],
     [kid, umbrellaOffset],
     [fire, k.vec2(-20, -10)],
     [koner, k.vec2(-26, -22)],
@@ -245,7 +243,7 @@ k.scene("main", async () => {
     }),
     k.body(),
     k.anchor("center"),
-    k.pos(), // Initial position will be set based on spawn point
+    k.pos(),
     k.scale(scaleFactor),
     {
       speed: 250,
@@ -256,6 +254,22 @@ k.scene("main", async () => {
     "player",
   ]);
 
+  const playerUmbrella = k.add([
+    k.sprite("spritesheet", { frame: playerUmbrellaFrame }),
+    k.z(601),
+    k.anchor("center"),
+    k.pos(),
+    k.scale(scaleFactor),
+    k.opacity(0),
+    {
+      update() {
+        const side = player.direction === "left" ? -1 : 1;
+        playerUmbrella.flipX = side === -1;
+        playerUmbrella.pos = player.pos.add(playerUmbrellaOffset.x * side, playerUmbrellaOffset.y);
+      },
+    },
+    "umbrella",
+  ]);
 
   for (const layer of layers) {
     if (layer.name === "boundaries") {
@@ -270,7 +284,7 @@ k.scene("main", async () => {
         ]);
 
         if (boundary.name) {
-          player.currentDialogueIndex[boundary.name] = 0; // Initialize dialogue index for each object
+          player.currentDialogueIndex[boundary.name] = 0;
           player.onCollide(boundary.name, () => {
             if (player.isInDialogue) return;
             player.isInDialogue = true;
@@ -281,7 +295,7 @@ k.scene("main", async () => {
               const currentLine = dialogueLines[player.currentDialogueIndex[dialogueKey]];
               displayDialogue(currentLine, () => {
                 player.isInDialogue = false;
-                player.currentDialogueIndex[dialogueKey] = (player.currentDialogueIndex[dialogueKey] + 1) % dialogueLines.length; // Cycle through dialogue lines
+                player.currentDialogueIndex[dialogueKey] = (player.currentDialogueIndex[dialogueKey] + 1) % dialogueLines.length;
               }, dialogueKey);
             }
           });
@@ -293,7 +307,6 @@ k.scene("main", async () => {
     if (layer.name === "spawnpoints") {
       for (const entity of layer.objects) {
         if (entity.name === "player") {
-          // Calculate the correct position based on the map and scale factors
           const playerPosX = (entity.x * scaleFactor);
           const playerPosY = (entity.y * scaleFactor);
           player.pos = k.vec2(playerPosX, playerPosY);
@@ -473,6 +486,7 @@ k.scene("main", async () => {
     initRain(k, {
       onWeather: (raining) => {
         for (const umbrella of umbrellas) umbrella.opacity = raining ? 1 : 0;
+        playerUmbrella.opacity = raining ? 1 : 0;
       },
       onIntensity: (level) => {
         audio.setRainVolume(level);
