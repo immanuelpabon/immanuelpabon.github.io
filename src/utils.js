@@ -1,22 +1,67 @@
-export function displayDialogue(text, onDisplayEnd) {
+import { k } from "./kaboomCtx";
+
+const typeSpeed = 30;
+
+function voicePitch(speaker) {
+  let sum = 0;
+  for (const ch of speaker) sum += ch.charCodeAt(0);
+  return 260 + (sum % 8) * 35;
+}
+
+function blip(pitch) {
+  const ctx = k.audioCtx;
+  if (!ctx || ctx.state !== "running") return;
+
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
+  osc.type = "triangle";
+  osc.frequency.value = pitch;
+
+  filter.type = "lowpass";
+  filter.frequency.value = pitch * 2.5;
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.1, now + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.07);
+}
+
+export function displayDialogue(text, onDisplayEnd, speaker = "") {
   const dialogueUI = document.getElementById("textbox-container");
   const dialogue = document.getElementById("dialogue");
+  const closeBtn = document.getElementById("close");
+  const pitch = voicePitch(speaker);
 
   dialogueUI.style.display = "block";
   let index = 0;
   let currentText = "";
+
   const intervalRef = setInterval(() => {
-    if (index < text.length) {
-      currentText += text[index];
-      dialogue.innerHTML = currentText;
-      index++;
+    if (index >= text.length) {
+      clearInterval(intervalRef);
       return;
     }
 
-    clearInterval(intervalRef);
-  }, 1);
+    if (text[index] === "<" && text.indexOf(">", index) !== -1) {
+      const end = text.indexOf(">", index);
+      currentText += text.slice(index, end + 1);
+      index = end + 1;
+    } else {
+      if (text[index] !== " ") blip(pitch);
+      currentText += text[index];
+      index++;
+    }
 
-  const closeBtn = document.getElementById("close");
+    dialogue.innerHTML = currentText;
+  }, typeSpeed);
 
   function onKeyPress(key) {
     if (key.code === "Enter") {
@@ -25,6 +70,14 @@ export function displayDialogue(text, onDisplayEnd) {
   }
 
   function onCloseBtnClick() {
+    if (index < text.length) {
+      clearInterval(intervalRef);
+      currentText = text;
+      dialogue.innerHTML = text;
+      index = text.length;
+      return;
+    }
+
     onDisplayEnd();
     dialogueUI.style.display = "none";
     dialogue.innerHTML = "";
@@ -38,10 +91,7 @@ export function displayDialogue(text, onDisplayEnd) {
 }
 
 export function setCamScale(k) {
-  const resizeFactor = k.width() / k.height();
-  if (resizeFactor < 1) {
-    k.camScale(k.vec2(1));
-  } else {
-    k.camScale(k.vec2(1.5));
-  }
+  const scale = k.width() / k.height() < 1 ? 1 : 1.5;
+  k.camScale(k.vec2(scale));
+  return scale;
 }

@@ -3,6 +3,8 @@ import { k } from "./kaboomCtx";
 import { displayDialogue, setCamScale } from "./utils";
 import { initAudio } from "./audio";
 import { initRain } from "./rain";
+import { initLeaves } from "./leaves";
+import { initDust } from "./dust";
 
 // Load sprites
 k.loadSprite("spritesheet", "./WimploSpritesheet.png", {
@@ -39,6 +41,10 @@ k.loadSprite("map", "./map.png");
 k.loadSprite("background", "./backgroundTrees.png");
 
 const audio = initAudio(k);
+
+const cameraEase = 14;
+const dialogueZoom = 1.12;
+const zoomEase = 4;
 
 // Function to create a tiled background
 function createTiledBackground(mapWidth, mapHeight, tileWidth, tileHeight) {
@@ -277,7 +283,7 @@ k.scene("main", async () => {
               displayDialogue(currentLine, () => {
                 player.isInDialogue = false;
                 player.currentDialogueIndex[dialogueKey] = (player.currentDialogueIndex[dialogueKey] + 1) % dialogueLines.length; // Cycle through dialogue lines
-              });
+              }, dialogueKey);
             }
           });
         }
@@ -298,14 +304,23 @@ k.scene("main", async () => {
     }
   }
 
-  setCamScale(k);
+  initDust(k, player, () => audio.step());
+
+  let baseScale = setCamScale(k);
+  let zoom = 1;
+
+  k.camPos(player.worldPos().x, player.worldPos().y - 100);
 
   k.onResize(() => {
-    setCamScale(k);
+    baseScale = setCamScale(k);
   });
 
   k.onUpdate(() => {
-    k.camPos(player.worldPos().x, player.worldPos().y - 100);
+    const target = k.vec2(player.worldPos().x, player.worldPos().y - 100);
+    k.camPos(k.camPos().lerp(target, Math.min(1, k.dt() * cameraEase)));
+
+    zoom = k.lerp(zoom, player.isInDialogue ? dialogueZoom : 1, Math.min(1, k.dt() * zoomEase));
+    k.camScale(k.vec2(baseScale * zoom));
   });
 
   k.onMouseDown((mouseBtn) => {
@@ -455,15 +470,19 @@ k.scene("main", async () => {
     startScreen.style.display = "none";
     document.querySelector(".note").style.display = "flex";
 
+    const leaves = initLeaves(k);
+
     initRain(k, {
       onWeather: (raining) => {
         for (const umbrella of umbrellas) umbrella.opacity = raining ? 1 : 0;
       },
-      onVolume: (level) => audio.setRainVolume(level),
+      onIntensity: (level) => {
+        audio.setRainVolume(level);
+        leaves.setDensity(1 - level);
+      },
+      onThunder: (level) => audio.thunder(level),
     });
   });
-
-  setCamScale(k);
 });
 
 k.go("main");

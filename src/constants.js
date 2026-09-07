@@ -14,7 +14,7 @@ export const dialogueData = {
   "Listen, pal. I'm just the sign that tells you to go look at the other signs. That's all I am.",
   "I don't matter really.",
   "...",
-  "Well, it's nice to have someone around to talk to, I guess. You're what, a goat?",
+  "Well, it's nice to have someone around to talk to, I guess. You're what, a dog?",
   "That's cool and stuff.",
   "My name's Sign-o by the way.",
   "That's a lie, my name is actually Derek. Derek the Sign.",

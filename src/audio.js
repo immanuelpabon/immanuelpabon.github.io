@@ -7,6 +7,20 @@ const rainSources = [["./rain.mp3", "audio/mpeg"]];
 
 const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown"];
 
+const thunderLength = 6;
+
+let noiseBuffer = null;
+
+function getNoise(ctx) {
+  if (noiseBuffer) return noiseBuffer;
+
+  noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * thunderLength, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+  return noiseBuffer;
+}
+
 async function pickSource(sources) {
   const probe = document.createElement("audio");
 
@@ -59,7 +73,6 @@ export function initAudio(k) {
     const ctx = k.audioCtx;
     if (ctx) {
       if (ctx.state !== "running") ctx.resume();
-      // iOS keeps the context silent until a buffer actually plays in the gesture
       const source = ctx.createBufferSource();
       source.buffer = ctx.createBuffer(1, 1, 22050);
       source.connect(ctx.destination);
@@ -69,7 +82,6 @@ export function initAudio(k) {
     music.start();
     rain.start();
 
-    // Safari can refuse the first attempts, so keep listening until it takes
     if (ctx && ctx.state === "running" && music.handle) {
       for (const event of unlockEvents) {
         window.removeEventListener(event, unlock);
@@ -82,6 +94,73 @@ export function initAudio(k) {
   }
 
   return {
+    thunder(level) {
+      const ctx = k.audioCtx;
+      if (!ctx || ctx.state !== "running") return;
+
+      const now = ctx.currentTime;
+      const source = ctx.createBufferSource();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      source.buffer = getNoise(ctx);
+      source.playbackRate.value = 0.8 + Math.random() * 0.4;
+
+      const rolls = 1 + Math.floor(Math.random() * (1 + (1 - level) * 2.5));
+
+      gain.gain.setValueAtTime(0, now);
+
+      let at = now;
+      let peak = 0.35 * level;
+
+      for (let i = 0; i < rolls; i++) {
+        const attack = i === 0 ? 0.05 + 0.2 * (1 - level) : 0.08 + Math.random() * 0.15;
+        const hold = 0.15 + Math.random() * 0.3;
+
+        gain.gain.linearRampToValueAtTime(peak, at + attack);
+        at += attack + hold;
+        gain.gain.linearRampToValueAtTime(peak * 0.3, at);
+        peak *= 0.7;
+      }
+
+      gain.gain.exponentialRampToValueAtTime(0.001, at + 1.2);
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(200 + 400 * level, now);
+      filter.frequency.exponentialRampToValueAtTime(80, at + 1.2);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(now, Math.random() * 1.5);
+      source.stop(at + 1.3);
+    },
+    step() {
+      const ctx = k.audioCtx;
+      if (!ctx || ctx.state !== "running") return;
+
+      const now = ctx.currentTime;
+      const source = ctx.createBufferSource();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      source.buffer = getNoise(ctx);
+      source.playbackRate.value = 0.9 + Math.random() * 0.3;
+
+      filter.type = "bandpass";
+      filter.frequency.value = 650 + Math.random() * 550;
+      filter.Q.value = 0.7;
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.018, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(now, Math.random() * 3);
+      source.stop(now + 0.09);
+    },
     setMusicVolume(level) {
       music.setVolume(level);
     },
