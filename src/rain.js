@@ -5,6 +5,7 @@ const dropLength = [14, 30];
 const dropWidth = 1.4;
 const dropOpacity = [0.18, 0.5];
 const dropColor = [174, 204, 255];
+const flashColor = [255, 255, 255];
 const tintColor = [40, 60, 110];
 const tintOpacity = 0.16;
 const splashChance = 0.55;
@@ -18,6 +19,7 @@ export function initRain(k, { onWeather, onIntensity, onThunder }) {
   const dir = k.vec2(Math.cos(rad), Math.sin(rad));
   const color = k.rgb(...dropColor);
   const tint = k.rgb(...tintColor);
+  const flashTint = k.rgb(...flashColor);
 
   let raining = k.chance(0.5);
   let intensity = raining ? 1 : 0;
@@ -75,9 +77,12 @@ export function initRain(k, { onWeather, onIntensity, onThunder }) {
 
     const target = raining ? 1 : 0;
     const step = dt / fadeTime;
-    intensity = target > intensity
-      ? Math.min(target, intensity + step)
-      : Math.max(target, intensity - step);
+
+    if (target > intensity) {
+      intensity = Math.min(target, intensity + step);
+    } else {
+      intensity = Math.max(target, intensity - step);
+    }
 
     onIntensity(intensity);
 
@@ -143,7 +148,7 @@ export function initRain(k, { onWeather, onIntensity, onThunder }) {
         width: k.width(),
         height: k.height(),
         pos: k.vec2(0, 0),
-        color: k.rgb(255, 255, 255),
+        color: flashTint,
         opacity: flash * 0.5 * intensity,
         fixed: true,
       });
@@ -153,13 +158,13 @@ export function initRain(k, { onWeather, onIntensity, onThunder }) {
 
     for (const splash of splashes) {
       const t = splash.t / splash.life;
+      const spread = (1 + t * 5) / zoom;
+      const lift = ((1 - t) * 3) / zoom;
+
       for (const side of [-1, 1]) {
         k.drawLine({
           p1: k.vec2(splash.x, splash.y),
-          p2: k.vec2(
-            splash.x + (side * (1 + t * 5)) / zoom,
-            splash.y - ((1 - t) * 3) / zoom
-          ),
+          p2: k.vec2(splash.x + side * spread, splash.y - lift),
           width: 1 / zoom,
           color,
           opacity: (1 - t) * 0.45 * intensity,

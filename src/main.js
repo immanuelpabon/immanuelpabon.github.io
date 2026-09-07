@@ -42,7 +42,6 @@ k.loadSprite("background", "./backgroundTrees.png");
 
 const audio = initAudio(k);
 
-const cameraEase = 14;
 const dialogueZoom = 1.12;
 const zoomEase = 4;
 
@@ -306,18 +305,17 @@ k.scene("main", async () => {
 
   initDust(k, player, () => audio.step());
 
-  let baseScale = setCamScale(k);
+  let baseScale = setCamScale();
   let zoom = 1;
 
   k.camPos(player.worldPos().x, player.worldPos().y - 100);
 
   k.onResize(() => {
-    baseScale = setCamScale(k);
+    baseScale = setCamScale();
   });
 
   k.onUpdate(() => {
-    const target = k.vec2(player.worldPos().x, player.worldPos().y - 100);
-    k.camPos(k.camPos().lerp(target, Math.min(1, k.dt() * cameraEase)));
+    k.camPos(player.worldPos().x, player.worldPos().y - 100);
 
     zoom = k.lerp(zoom, player.isInDialogue ? dialogueZoom : 1, Math.min(1, k.dt() * zoomEase));
     k.camScale(k.vec2(baseScale * zoom));

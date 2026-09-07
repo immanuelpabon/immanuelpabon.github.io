@@ -90,8 +90,9 @@ export function displayDialogue(text, onDisplayEnd, speaker = "") {
   window.addEventListener("keypress", onKeyPress);
 }
 
-export function setCamScale(k) {
-  const scale = k.width() / k.height() < 1 ? 1 : 1.5;
+export function setCamScale() {
+  const resizeFactor = k.width() / k.height();
+  const scale = resizeFactor < 1 ? 1 : 1.5;
   k.camScale(k.vec2(scale));
   return scale;
 }

@@ -7,7 +7,7 @@ const leafOpacity = [0.55, 1];
 const swayRate = [1.2, 2.6];
 const swayWidth = [7, 23];
 const tumbleRate = [3, 7];
-const margin = 60;
+const leafMargin = 60;
 
 export function initLeaves(k) {
   let leaves = [];
@@ -26,10 +26,12 @@ export function initLeaves(k) {
 
   function spawn(leaf, seeded) {
     const v = view();
-    leaf.x = k.rand(v.x - v.halfW - margin, v.x + v.halfW + margin);
-    leaf.y = seeded
-      ? k.rand(v.y - v.halfH, v.y + v.halfH)
-      : k.rand(v.y - v.halfH - 140, v.y - v.halfH - 20);
+    leaf.x = k.rand(v.x - v.halfW - leafMargin, v.x + v.halfW + leafMargin);
+    if (seeded) {
+      leaf.y = k.rand(v.y - v.halfH, v.y + v.halfH);
+    } else {
+      leaf.y = k.rand(v.y - v.halfH - 140, v.y - v.halfH - 20);
+    }
     leaf.speed = k.rand(leafSpeed[0], leafSpeed[1]);
     leaf.drift = k.rand(leafDrift[0], leafDrift[1]);
     leaf.scale = k.rand(leafScale[0], leafScale[1]);
@@ -61,12 +63,10 @@ export function initLeaves(k) {
       leaf.y += leaf.speed * dt;
       leaf.x += (leaf.drift + Math.cos(leaf.phase) * leaf.swayWidth) * dt;
 
-      const gone =
-        leaf.y > v.y + v.halfH + margin ||
-        leaf.x < v.x - v.halfW - margin * 3 ||
-        leaf.x > v.x + v.halfW + margin * 3;
+      const belowView = leaf.y > v.y + v.halfH + leafMargin;
+      const pastSide = Math.abs(leaf.x - v.x) > v.halfW + leafMargin * 3;
 
-      if (gone) spawn(leaf, false);
+      if (belowView || pastSide) spawn(leaf, false);
     }
   });
 

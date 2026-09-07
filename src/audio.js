@@ -7,14 +7,15 @@ const rainSources = [["./rain.mp3", "audio/mpeg"]];
 
 const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown"];
 
-const thunderLength = 6;
+const noiseLength = 6;
 
 let noiseBuffer = null;
+let unlocked = false;
 
 function getNoise(ctx) {
   if (noiseBuffer) return noiseBuffer;
 
-  noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * thunderLength, ctx.sampleRate);
+  noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * noiseLength, ctx.sampleRate);
   const data = noiseBuffer.getChannelData(0);
   for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
 
@@ -33,17 +34,19 @@ async function pickSource(sources) {
   return null;
 }
 
-function loadTrack(k, name, sources, volume, isUnlocked) {
-  const track = { handle: null, ready: false, volume };
-
-  track.start = () => {
-    if (track.handle || !track.ready || !isUnlocked()) return;
-    track.handle = k.play(name, { loop: true, volume: track.volume });
-  };
-
-  track.setVolume = (v) => {
-    track.volume = v;
-    if (track.handle) track.handle.volume = v;
+function loadTrack(k, name, sources, volume) {
+  const track = {
+    handle: null,
+    ready: false,
+    volume,
+    start() {
+      if (track.handle || !track.ready || !unlocked) return;
+      track.handle = k.play(name, { loop: true, volume: track.volume });
+    },
+    setVolume(v) {
+      track.volume = v;
+      if (track.handle) track.handle.volume = v;
+    },
   };
 
   pickSource(sources).then((src) => {
@@ -60,24 +63,87 @@ function loadTrack(k, name, sources, volume, isUnlocked) {
   return track;
 }
 
+function playThunder(ctx, level) {
+  const now = ctx.currentTime;
+  const source = ctx.createBufferSource();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
+  source.buffer = getNoise(ctx);
+  source.playbackRate.value = 0.8 + Math.random() * 0.4;
+
+  const rolls = 1 + Math.floor(Math.random() * (1 + (1 - level) * 2.5));
+
+  let at = now;
+  let peak = 0.35 * level;
+
+  gain.gain.setValueAtTime(0, now);
+
+  for (let i = 0; i < rolls; i++) {
+    const attack = i === 0 ? 0.05 + 0.2 * (1 - level) : 0.08 + Math.random() * 0.15;
+    const hold = 0.15 + Math.random() * 0.3;
+
+    gain.gain.linearRampToValueAtTime(peak, at + attack);
+    at += attack + hold;
+    gain.gain.linearRampToValueAtTime(peak * 0.3, at);
+    peak *= 0.7;
+  }
+
+  gain.gain.exponentialRampToValueAtTime(0.001, at + 1.2);
+
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(200 + 400 * level, now);
+  filter.frequency.exponentialRampToValueAtTime(80, at + 1.2);
+
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(now, Math.random() * 1.5);
+  source.stop(at + 1.3);
+}
+
+function playStep(ctx) {
+  const now = ctx.currentTime;
+  const source = ctx.createBufferSource();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
+  source.buffer = getNoise(ctx);
+  source.playbackRate.value = 0.9 + Math.random() * 0.3;
+
+  filter.type = "bandpass";
+  filter.frequency.value = 650 + Math.random() * 550;
+  filter.Q.value = 0.7;
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.018, now + 0.005);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(now, Math.random() * 3);
+  source.stop(now + 0.09);
+}
+
+function unlockContext(ctx) {
+  if (ctx.state !== "running") ctx.resume();
+
+  const source = ctx.createBufferSource();
+  source.buffer = ctx.createBuffer(1, 1, 22050);
+  source.connect(ctx.destination);
+  source.start(0);
+}
+
 export function initAudio(k) {
-  let unlocked = false;
-  const isUnlocked = () => unlocked;
+  const music = loadTrack(k, "backgroundMusic", musicSources, 0);
+  const rain = loadTrack(k, "rainAmbience", rainSources, 0);
 
-  const music = loadTrack(k, "backgroundMusic", musicSources, 0, isUnlocked);
-  const rain = loadTrack(k, "rainAmbience", rainSources, 0, isUnlocked);
-
-  const unlock = () => {
+  function unlock() {
     unlocked = true;
 
     const ctx = k.audioCtx;
-    if (ctx) {
-      if (ctx.state !== "running") ctx.resume();
-      const source = ctx.createBufferSource();
-      source.buffer = ctx.createBuffer(1, 1, 22050);
-      source.connect(ctx.destination);
-      source.start(0);
-    }
+    if (ctx) unlockContext(ctx);
 
     music.start();
     rain.start();
@@ -87,7 +153,7 @@ export function initAudio(k) {
         window.removeEventListener(event, unlock);
       }
     }
-  };
+  }
 
   for (const event of unlockEvents) {
     window.addEventListener(event, unlock);
@@ -95,71 +161,10 @@ export function initAudio(k) {
 
   return {
     thunder(level) {
-      const ctx = k.audioCtx;
-      if (!ctx || ctx.state !== "running") return;
-
-      const now = ctx.currentTime;
-      const source = ctx.createBufferSource();
-      const filter = ctx.createBiquadFilter();
-      const gain = ctx.createGain();
-
-      source.buffer = getNoise(ctx);
-      source.playbackRate.value = 0.8 + Math.random() * 0.4;
-
-      const rolls = 1 + Math.floor(Math.random() * (1 + (1 - level) * 2.5));
-
-      gain.gain.setValueAtTime(0, now);
-
-      let at = now;
-      let peak = 0.35 * level;
-
-      for (let i = 0; i < rolls; i++) {
-        const attack = i === 0 ? 0.05 + 0.2 * (1 - level) : 0.08 + Math.random() * 0.15;
-        const hold = 0.15 + Math.random() * 0.3;
-
-        gain.gain.linearRampToValueAtTime(peak, at + attack);
-        at += attack + hold;
-        gain.gain.linearRampToValueAtTime(peak * 0.3, at);
-        peak *= 0.7;
-      }
-
-      gain.gain.exponentialRampToValueAtTime(0.001, at + 1.2);
-
-      filter.type = "lowpass";
-      filter.frequency.setValueAtTime(200 + 400 * level, now);
-      filter.frequency.exponentialRampToValueAtTime(80, at + 1.2);
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      source.start(now, Math.random() * 1.5);
-      source.stop(at + 1.3);
+      if (k.audioCtx && k.audioCtx.state === "running") playThunder(k.audioCtx, level);
     },
     step() {
-      const ctx = k.audioCtx;
-      if (!ctx || ctx.state !== "running") return;
-
-      const now = ctx.currentTime;
-      const source = ctx.createBufferSource();
-      const filter = ctx.createBiquadFilter();
-      const gain = ctx.createGain();
-
-      source.buffer = getNoise(ctx);
-      source.playbackRate.value = 0.9 + Math.random() * 0.3;
-
-      filter.type = "bandpass";
-      filter.frequency.value = 650 + Math.random() * 550;
-      filter.Q.value = 0.7;
-
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.018, now + 0.005);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      source.start(now, Math.random() * 3);
-      source.stop(now + 0.09);
+      if (k.audioCtx && k.audioCtx.state === "running") playStep(k.audioCtx);
     },
     setMusicVolume(level) {
       music.setVolume(level);
