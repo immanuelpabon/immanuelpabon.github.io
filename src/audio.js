@@ -8,7 +8,9 @@ const rainSources = [["./rain.mp3", "audio/mpeg"]];
 const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown"];
 
 const noiseLength = 6;
-const restartAfterHidden = 5000;
+const thunderVolume = 0.35;
+const stepVolume = 0.018;
+const reloadAfterHidden = 5000;
 
 let noiseBuffer = null;
 let unlocked = false;
@@ -22,6 +24,10 @@ function getNoise(ctx) {
   for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
 
   return noiseBuffer;
+}
+
+function isTouchDevice() {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
 }
 
 async function pickSource(sources) {
@@ -44,16 +50,6 @@ function loadTrack(k, name, sources, volume) {
     start() {
       if (track.handle || !track.ready || !unlocked) return;
       track.handle = k.play(name, { loop: true, volume: track.volume });
-    },
-    restart() {
-      if (!track.ready || !unlocked) return;
-
-      if (track.handle) {
-        track.handle.stop();
-        track.handle = null;
-      }
-
-      track.start();
     },
     setVolume(v) {
       track.volume = v;
@@ -87,7 +83,7 @@ function playThunder(ctx, level) {
   const rolls = 1 + Math.floor(Math.random() * (1 + (1 - level) * 2.5));
 
   let at = now;
-  let peak = 0.35 * level;
+  let peak = thunderVolume * level;
 
   gain.gain.setValueAtTime(0, now);
 
@@ -128,7 +124,7 @@ function playStep(ctx) {
   filter.Q.value = 0.7;
 
   gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.018, now + 0.005);
+  gain.gain.linearRampToValueAtTime(stepVolume, now + 0.005);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
 
   source.connect(filter);
@@ -139,7 +135,7 @@ function playStep(ctx) {
 }
 
 function unlockContext(ctx) {
-  if (ctx.state !== "running") ctx.resume();
+  ctx.resume();
 
   const source = ctx.createBufferSource();
   source.buffer = ctx.createBuffer(1, 1, 22050);
@@ -171,11 +167,10 @@ export function initAudio(k) {
       return;
     }
 
-    if (!hiddenAt || Date.now() - hiddenAt < restartAfterHidden) return;
+    if (!unlocked || !hiddenAt || !isTouchDevice()) return;
+    if (Date.now() - hiddenAt < reloadAfterHidden) return;
 
-    hiddenAt = 0;
-    music.restart();
-    rain.restart();
+    location.reload();
   });
 
   return {
