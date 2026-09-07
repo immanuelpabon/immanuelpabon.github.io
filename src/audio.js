@@ -10,7 +10,7 @@ const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown
 const noiseLength = 6;
 const thunderVolume = 0.35;
 const stepVolume = 0.018;
-const reloadAfterHidden = 5000;
+const reloadAfterHidden = 1000;
 
 let noiseBuffer = null;
 let unlocked = false;
