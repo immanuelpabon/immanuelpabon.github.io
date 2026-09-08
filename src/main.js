@@ -24,7 +24,7 @@ k.loadSprite("spritesheet", "./WimploSpritesheet.png", {
     "koner-idle": { from: 792, to: 795, loop: true, speed: 6 },
     "brush-idle": { from: 410, to: 413, loop: true, speed: 6 },
     "son-idle": { from: 870, to: 872, loop: true, speed: 6 },
-    "top_hat-idle": { from: 802, to: 803, loop: true, speed: 3 },
+    "music_wizard-idle": { from: 804, to: 805, loop: true, speed: 3 },
     "kid-idle": { from: 831, to: 832, loop: true, speed: 6 },
     "spy-idle": { from: 181, to: 182, loop: true, speed: 3 },
     "omori-idle": { from: 214, to: 217, loop: true, speed: 6 },
@@ -123,12 +123,12 @@ k.scene("main", async () => {
     "son",
   ]);
 
-  const top_hat = k.add([
-    k.sprite("spritesheet", { anim: "top_hat-idle" }),
+  const music_wizard = k.add([
+    k.sprite("spritesheet", { anim: "music_wizard-idle" }),
     k.anchor("center"),
     k.pos(2400, 630),
     k.scale(scaleFactor),
-    "top_hat",
+    "music_wizard",
   ]);
 
   const kid = k.add([
@@ -218,7 +218,7 @@ k.scene("main", async () => {
     [twitter, k.vec2(-26, -22)],
     [discord, umbrellaOffset],
     [son, umbrellaOffset],
-    [top_hat, umbrellaOffset],
+    [music_wizard, umbrellaOffset],
     [kid, umbrellaOffset],
     [fire, k.vec2(-20, -10)],
     [koner, k.vec2(-26, -22)],
@@ -469,7 +469,7 @@ k.scene("main", async () => {
       update() {
         if (!started || curtain <= 0) return;
         curtain = Math.max(0, curtain - k.dt() / 1.5);
-        audio.setMusicVolume(0.5 * (1 - curtain));
+        audio.setMusicVolume(1 - curtain);
       },
     },
   ]);

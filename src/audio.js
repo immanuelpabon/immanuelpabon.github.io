@@ -10,6 +10,8 @@ const unlockEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown
 const noiseLength = 6;
 const thunderVolume = 0.35;
 const stepVolume = 0.018;
+const musicVolume = 1.8;
+const rainVolume = 0.4;
 const reloadAfterHidden = 1000;
 
 let noiseBuffer = null;
@@ -181,10 +183,10 @@ export function initAudio(k) {
       if (k.audioCtx && k.audioCtx.state === "running") playStep(k.audioCtx);
     },
     setMusicVolume(level) {
-      music.setVolume(level);
+      music.setVolume(level * musicVolume);
     },
     setRainVolume(level) {
-      rain.setVolume(level * 0.5);
+      rain.setVolume(level * rainVolume);
     },
   };
 }
